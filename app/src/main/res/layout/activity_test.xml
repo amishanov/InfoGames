@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestActivity">
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/textViewQuestion1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:text="@string/question_holder"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextAnswer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:visibility="invisible"
+            android:clickable="false"
+            android:hint="@string/answer_holder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.566"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewQuestion1" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutChoose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box"
+        android:visibility="invisible"
+        android:clickable="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/textViewQuestion2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:hint="@string/question_holder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewQuestion2">
+
+            <RadioButton
+                android:id="@+id/rbAnswer1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/answer_holder" />
+
+            <RadioButton
+                android:id="@+id/rbAnswer2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/answer_holder" />
+
+            <RadioButton
+                android:id="@+id/rbAnswer3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/answer_holder" />
+
+            <RadioButton
+                android:id="@+id/rbAnswer4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/answer_holder" />
+
+        </RadioGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <Button
+        android:id="@+id/buttonReview"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:layout_marginBottom="64dp"
+        android:clickable="false"
+        android:text="@string/review"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/buttonControl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonPrev"
+        android:layout_width="63dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="25dp"
+        android:text="P"
+        android:textSize="30sp"
+        android:visibility="invisible"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonNext"
+        android:layout_width="63dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="25dp"
+        android:text="N"
+        android:textSize="30sp"
+        android:visibility="invisible"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonControl"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/buttonPrev" />
+
+    <Button
+        android:id="@+id/buttonControl"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="25dp"
+        android:text="@string/start_test"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewCounter"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="30sp"
+        android:text="@string/question_count"
+        app:layout_constraintBottom_toTopOf="@+id/buttonPrev"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

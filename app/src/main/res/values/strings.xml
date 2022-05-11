@@ -4,7 +4,7 @@
     <string name="play">Играть</string>
     <string name="learn">Учиться</string>
     <string name="start_test">Начать тестирование</string>
-    <string name="finish_test">Закончить тестирование</string>
+    <string name="finish_test">Закончить тест</string>
     <string name="review">Оценить материал</string>
     <string name="answer_holder">Ответ</string>
     <string name="question_holder">Вопрос</string>

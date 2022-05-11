@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class TestActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Проверка запущен ли тест для изменения элементов интерфейса
-    private boolean isTestStarted;
+    private boolean isTestFinished;
     // Массив ответов
     private ArrayList<String> answers;
     // Сам тест
@@ -41,7 +41,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        isTestStarted = false;
+        isTestFinished = false;
         // Инициализация элементов
         viewInit();
 
@@ -49,6 +49,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         String theme = "Тестовая тема";
         String welcomeString = "Вы хотите пройти тестирование по теме: \"" + theme + "\"?";
         textViewQuestion1.setText(welcomeString);
+
+        // TODO Загрузка прошлых результатов
 
         // TODO Где-то здесь получаются данные теста
         test = generateTestForTest();
@@ -103,10 +105,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonControl) {
-            if (isTestStarted) {
+            if (isTestFinished) {
+                finish();
+            }
+            else {
 
                 //TODO Подтверждение завершения
-
                 answers.set(currentQuestion, getAnswer());
                 setUpLayout(true);
                 editTextAnswer.setVisibility(View.INVISIBLE);
@@ -114,32 +118,21 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 int result = check();
                 textViewQuestion1.setText("Результат вашего тестирования: " + result);
 
+                // TODO Отображение предыдущих результатов
+                // TODO Фиксация результатов
+
                 buttonNext.setVisibility(View.INVISIBLE);
                 buttonNext.setClickable(false);
                 buttonPrev.setVisibility(View.INVISIBLE);
                 buttonPrev.setClickable(false);
                 questionCounter.setVisibility(View.INVISIBLE);
+
+                buttonReview.setText("Оцените материал");
                 buttonReview.setVisibility(View.VISIBLE);
                 buttonReview.setClickable(true);
 
-                // TODO Отображение предыдущих результатов
-                // TODO Фиксация результатов
-                // TODO ВОЗВРАЩЕНИЕ НА ПРЕДЫДУЩУЮ АКТИВНОСТЬ
-                isTestStarted = false;
-
-            }
-            else {
-                buttonControl.setText("Завершить тест");
-                buttonNext.setVisibility(View.VISIBLE);
-                buttonNext.setClickable(true);
-                buttonPrev.setVisibility(View.VISIBLE);
-                buttonPrev.setClickable(true);
-                questionCounter.setVisibility(View.VISIBLE);
-                questionCounter.setText((currentQuestion + 1) + "/" + testSize);
-                showQuestion(test.get(currentQuestion));
-                editTextAnswer.setVisibility(View.VISIBLE);
-                editTextAnswer.setClickable(true);
-                isTestStarted = true;
+                buttonControl.setText("Вернуться к темам");
+                isTestFinished = true;
             }
         } else if (id == R.id.buttonNext) {
             answers.set(currentQuestion, getAnswer());
@@ -169,7 +162,26 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         } else if (id == R.id.buttonReview) {
-            // TODO КНОПКА ОТЗЫВА
+            if (isTestFinished) {
+                // TODO КНОПКА ОТЗЫВА
+                Toast.makeText(getApplicationContext(), "ОТЗЫВ", Toast.LENGTH_SHORT).show();
+            } else {
+                buttonControl.setVisibility(View.VISIBLE);
+                buttonControl.setClickable(true);
+                buttonReview.setVisibility(View.INVISIBLE);
+                buttonReview.setClickable(false);
+
+                buttonNext.setVisibility(View.VISIBLE);
+                buttonNext.setClickable(true);
+                buttonPrev.setVisibility(View.VISIBLE);
+                buttonPrev.setClickable(true);
+                questionCounter.setVisibility(View.VISIBLE);
+                questionCounter.setText((currentQuestion + 1) + "/" + testSize);
+                showQuestion(test.get(currentQuestion));
+                editTextAnswer.setVisibility(View.VISIBLE);
+                editTextAnswer.setClickable(true);
+            }
+
         }
     }
 
@@ -194,20 +206,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private String getAnswer() {
         if (test.get(currentQuestion).getType() == 1) {
             return editTextAnswer.getText().toString();
-//            answers.set(currentQuestion, editTextAnswer.getText().toString());
         } else {
             if (rb1.isChecked())
                 return "0";
-//                answers.set(currentQuestion, "0");
             else if (rb2.isChecked())
                 return "1";
-//                answers.set(currentQuestion, "1");
             else if (rb3.isChecked())
                 return "2";
-//                answers.set(currentQuestion, "2");
             else if (rb4.isChecked())
                 return "3";
-//                answers.set(currentQuestion, "3");
         }
         return null;
     }

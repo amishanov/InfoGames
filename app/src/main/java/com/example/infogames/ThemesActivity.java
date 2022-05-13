@@ -1,12 +1,14 @@
 package com.example.infogames;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public class ThemesActivity extends AppCompatActivity {
 
+    private Data data;
     private String[] expList = {"Тема 1: Общие понятия информатики", "Тема 2: Системы счисления",
             "Тема 3: Булева алгебра", "Тема 4: Логические функции",
             "Тема 5: Цифровая схемотехника",  "Тема 6: Алгоритмы и элементы программирования"};
@@ -24,11 +27,20 @@ public class ThemesActivity extends AppCompatActivity {
     HashMap<String, List<String>> listItem;
     ExpListAdapter adapter;
 
+    private Toolbar toolbar;
+    TextView textViewScore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_themes);
         setTitle(R.string.learn);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        data = Data.getInstance();
+        TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
+        textViewScore.setText(Integer.toString(data.getScore()));
 
         expandableListView = findViewById(R.id.expListView);
         listGroup = new ArrayList<>();

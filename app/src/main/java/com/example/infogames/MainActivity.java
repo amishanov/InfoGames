@@ -1,14 +1,17 @@
 package com.example.infogames;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toolbar;
+import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private Data data;
 
     private Toolbar toolbar;
     @Override
@@ -18,6 +21,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         buttonSetUp();
+
+        data = Data.getInstance();
+        data.setScore(5);
+        TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
+        textViewScore.setText(Integer.toString(data.getScore()));
     }
 
     // Метод для настройки кнопок

@@ -9,4 +9,6 @@
     <string name="answer_holder">Ответ</string>
     <string name="question_holder">Вопрос</string>
     <string name="question_count">0/0</string>
+    <string name="score">Score</string>
+    <string name="profile_button">Profile button</string>
 </resources>

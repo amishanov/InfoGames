@@ -1,6 +1,7 @@
 package com.example.infogames;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
@@ -13,11 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 // TODO ФИКСАЦИЯ РЕЗУЛЬТАТОВ, ДОБАВЛЕНИЕ ОЧКОВ, ФИКСАЦИЯ ОТЗЫВА
 public class TestActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private Data data;
     // Проверка запущен ли тест для изменения элементов интерфейса
     private boolean isTestFinished;
     // Массив ответов
@@ -27,6 +30,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     int currentQuestion, testSize;
 
     // Элементы интерфейса
+    private Toolbar toolbar;
+    TextView textViewScore;
     Button buttonNext, buttonPrev, buttonReview, buttonControl;
     RadioButton rb1, rb2, rb3, rb4;
     RadioGroup rg;
@@ -36,10 +41,19 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        data = Data.getInstance();
+        TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
+        textViewScore.setText(Integer.toString(data.getScore()));
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         isTestFinished = false;
         // Инициализация элементов

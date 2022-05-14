@@ -5,6 +5,7 @@ import com.example.infogames.model.User;
 public class Data {
     private static Data instance;
     private User user;
+    private boolean isLogin = false;
 
     private Data() {
         user = new User();
@@ -30,14 +31,11 @@ public class Data {
         this.user = user;
     }
 
-    public void setScore(int score) {
-        user.setScore(score);
+    public void setIsLogin(boolean login) {
+        isLogin = login;
     }
 
-
-
-    public int getScore() {
-        return user.getScore();
+    public boolean isLogin() {
+        return isLogin;
     }
-
 }

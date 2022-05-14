@@ -11,4 +11,13 @@
     <string name="question_count">0/0</string>
     <string name="score">Score</string>
     <string name="profile_button">Profile button</string>
+    <string name="sign_in">Войти</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="email">Email</string>
+    <string name="tag">Войти в приложение</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="sign_out">Выйти</string>
+    <string name="retype_password">Повторите пароль</string>
+    <string name="registration">Регистрация</string>
 </resources>

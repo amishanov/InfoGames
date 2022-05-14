@@ -13,7 +13,12 @@ public class User {
     private Integer[] testsBests;
     private Integer[] gamesBests;
 
-    public User() {}
+    public User() {
+        //TODO Убрать, так как должно происходить чтение из файла
+        access = new Boolean[]{true, false, false, false, false, false};
+        testsBests = new Integer[]{0, 0, 0, 0, 0, 0};
+        gamesBests = new Integer[]{0};
+    }
 
     public User(int _id, String email, String login, String password,
                 String token, int score, Boolean[] access,

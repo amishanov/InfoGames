@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         buttonSetUp();
 
+
+        // TODO Изначальная инициализация файлов
         data = Data.getInstance();
         user = data.getUser();
         System.out.println(user);
@@ -73,29 +76,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // Метод для настройки кнопок
     private void buttonSetUp() {
-        Button learnButton = (Button) findViewById(R.id.learnButton);
-        Button playButton = (Button) findViewById(R.id.playButton);
-        Button a = (Button) findViewById(R.id.te);
-        a.setOnClickListener(this);
+        Button learnButton = (Button) findViewById(R.id.buttonLearn);
+        Button playButton = (Button) findViewById(R.id.buttonPlay);
+        ImageButton profileButton = (ImageButton) findViewById(R.id.buttonProfile);
+
         learnButton.setOnClickListener(this);
         playButton.setOnClickListener(this);
+        profileButton.setOnClickListener(this);
+
+        Button a = (Button) findViewById(R.id.te);
+        a.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.learnButton) {
-            System.out.println(user.getScore());
+        if (id == R.id.buttonLearn) {
             Intent intent = new Intent(this, ThemesActivity.class);
             startActivity(intent);
-        } else if (id == R.id.playButton) {
+        } else if (id == R.id.buttonPlay) {
             Intent intent = new Intent(this, TestActivity.class);
             startActivity(intent);
             // TODO Переход на игровую активность
-        } else if (id == R.id.te) {
+        } else if (id == R.id.buttonProfile) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        }  else if (id == R.id.te) {
             Log.i("MYTAG", user.toString());
             Toast.makeText(this, Integer.toString(user.getScore()), Toast.LENGTH_LONG).show();
             System.out.println(user);
+//            setContentView(R.layout.activity_profile);
         }
 
     }

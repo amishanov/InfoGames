@@ -1,4 +1,4 @@
-package com.example.infogames;
+package com.example.infogames.model;
 
 public class Question {
     private String question;

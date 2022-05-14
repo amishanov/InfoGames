@@ -13,14 +13,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.infogames.model.Question;
+import com.example.infogames.model.User;
+
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 // TODO ФИКСАЦИЯ РЕЗУЛЬТАТОВ, ДОБАВЛЕНИЕ ОЧКОВ, ФИКСАЦИЯ ОТЗЫВА
 public class TestActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Data data;
+    private User user;
     // Проверка запущен ли тест для изменения элементов интерфейса
     private boolean isTestFinished;
     // Массив ответов
@@ -30,7 +33,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     int currentQuestion, testSize;
 
     // Элементы интерфейса
-    private Toolbar toolbar;
+    Toolbar toolbar;
     TextView textViewScore;
     Button buttonNext, buttonPrev, buttonReview, buttonControl;
     RadioButton rb1, rb2, rb3, rb4;
@@ -49,11 +52,14 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        data = Data.getInstance();
-        TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
-        textViewScore.setText(Integer.toString(data.getScore()));
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        data = Data.getInstance();
+        user = data.getUser();
+        System.out.println(user);
+        TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
+        textViewScore.setText(Integer.toString(user.getScore()));
+
 
         isTestFinished = false;
         // Инициализация элементов
@@ -294,5 +300,11 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         return result;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

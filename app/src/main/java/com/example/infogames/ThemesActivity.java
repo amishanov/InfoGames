@@ -11,6 +11,8 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.infogames.model.User;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ThemesActivity extends AppCompatActivity {
 
     private Data data;
+    private User user;
     private String[] expList = {"Тема 1: Общие понятия информатики", "Тема 2: Системы счисления",
             "Тема 3: Булева алгебра", "Тема 4: Логические функции",
             "Тема 5: Цифровая схемотехника",  "Тема 6: Алгоритмы и элементы программирования"};
@@ -30,6 +33,7 @@ public class ThemesActivity extends AppCompatActivity {
     private Toolbar toolbar;
     TextView textViewScore;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,9 +42,12 @@ public class ThemesActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         data = Data.getInstance();
+        user = data.getUser();
         TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
-        textViewScore.setText(Integer.toString(data.getScore()));
+        textViewScore.setText(Integer.toString(user.getScore()));
 
         expandableListView = findViewById(R.id.expListView);
         listGroup = new ArrayList<>();
@@ -92,5 +99,11 @@ public class ThemesActivity extends AppCompatActivity {
         listItem.put(expList[4], list1);
         listItem.put(expList[5], list1);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

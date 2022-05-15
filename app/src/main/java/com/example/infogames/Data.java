@@ -1,7 +1,13 @@
 package com.example.infogames;
 
 import com.example.infogames.model.User;
+import com.example.infogames.model.UserData;
 import com.example.infogames.retrofit.RetrofitService;
+import com.example.infogames.retrofit.UserService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class Data {
@@ -39,6 +45,7 @@ public class Data {
         return retrofitService;
     }
 
+
     public void setRetrofitService(RetrofitService retrofitService) {
         this.retrofitService = retrofitService;
     }
@@ -49,6 +56,27 @@ public class Data {
 
     public boolean isLogin() {
         return isLogin;
+    }
+
+    public void sendUserData() {
+        //TODO Отправка
+        UserService userService = retrofitService.getRetrofit().create(UserService.class);
+        UserData userData = new UserData(user.getToken(), user.getScore(), user.getAccess(),
+                user.getTestsBests(), user.getGamesBests());
+        userService.updateData(userData).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) {
+                    System.out.println("sendUserDa  ta: PASS");
+                } else if (response.code() == 304) {
+                    System.out.println("sendUserData: Failed 304");
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                System.out.println("sendUserData: Failed, " + t);
+            }
+        });
     }
 
 }

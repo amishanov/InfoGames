@@ -66,22 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     MainActivity.this.user.setScore(222);
                     User a = MainActivity.this.user;
                     UserData userData = new UserData(a.getToken(), a.getScore(), a.getAccess(), a.getTestsBests(), a.getGamesBests());
-                    userService.updateData(userData).enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if (response.code() == 200) {
-                                System.out.println("Update PASS");
-                            } else if (response.code() == 304) {
-                                System.out.println("Update NOT MODIFIED");
-                            } else {
-                                System.out.println("Update something is wrong...");
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            System.out.println("UPDATE FAILED" + t);
-                        }
-                    });
 //                Data.getInstance().setUser(response.body());
                     textViewScore.setText(Integer.toString(MainActivity.this.user.getScore()));
                 }

@@ -100,7 +100,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             initElementsLogin();
 
         } else if (id == R.id.buttonLogin) {
-            //TODO Не забыть добавить обновление переменной isLogin
+            //TODO СИНХРОНИЗАЦИЯ ДАННЫХ С СЕРВЕРОМ
 
             RetrofitService retrofitService = data.getRetrofitService();
             UserService userService = retrofitService.getRetrofit().create(UserService.class);

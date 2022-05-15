@@ -1,6 +1,7 @@
 package com.example.infogames;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 public class MyApplication extends Application {
     @Override
@@ -8,4 +9,5 @@ public class MyApplication extends Application {
         super.onCreate();
         Data.initInstance();
     }
+
 }

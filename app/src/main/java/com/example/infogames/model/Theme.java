@@ -1,6 +1,8 @@
 package com.example.infogames.model;
 
-public class Theme {
+import java.io.Serializable;
+
+public class Theme implements Serializable {
     private int id;
     private String themeName;
     private int testId;

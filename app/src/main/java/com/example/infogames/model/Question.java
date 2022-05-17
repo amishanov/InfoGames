@@ -1,8 +1,9 @@
 package com.example.infogames.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Question {
+public class Question implements Serializable {
     private String question;
     // Если type = 1, то вопрос с ручным вводом варианта ответа, если 2 - с выбором
     private int type;

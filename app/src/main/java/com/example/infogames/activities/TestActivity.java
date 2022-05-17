@@ -1,4 +1,4 @@
-package com.example.infogames;
+package com.example.infogames.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,13 +11,20 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.infogames.Data;
+import com.example.infogames.R;
 import com.example.infogames.model.Question;
+import com.example.infogames.model.Review;
+import com.example.infogames.model.Test;
 import com.example.infogames.model.User;
+import com.example.infogames.retrofit.RetrofitService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 // TODO ФИКСАЦИЯ РЕЗУЛЬТАТОВ, ДОБАВЛЕНИЕ ОЧКОВ, ФИКСАЦИЯ ОТЗЫВА
@@ -25,25 +32,26 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     private Data data;
     private User user;
+    private int testId;
+    private Test test;
     // Проверка запущен ли тест для изменения элементов интерфейса
     private boolean isTestFinished;
     // Массив ответов
-    private ArrayList<String> answers;
+    List<String> answers;
     // Сам тест
-    ArrayList<Question> test;
+    List<Question> questionList;
     int currentQuestion, testSize;
 
     // Элементы интерфейса
     Toolbar toolbar;
     TextView textViewScore;
+    RatingBar ratingBar;
     Button buttonNext, buttonPrev, buttonReview, buttonControl;
     RadioButton rb1, rb2, rb3, rb4;
     RadioGroup rg;
     EditText editTextAnswer;
     ConstraintLayout layoutInput, layoutChoose;
     TextView textViewQuestion1, textViewQuestion2, questionCounter;
-
-
 
 
     @Override
@@ -55,11 +63,19 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Bundle arguments = getIntent().getExtras();
+        if (arguments != null) {
+            testId = arguments.getInt("testId");
+            test = (Test) arguments.getSerializable("test");
+            questionList = test.getQuestionList();
+        } else {
+            finish();
+        }
+
         data = Data.getInstance();
         user = data.getUser();
         System.out.println(user);
-        TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
-        textViewScore.setText(Integer.toString(user.getScore()));
+        textViewScore = (TextView) findViewById(R.id.textViewScore);
 
         if (data.isLogin())
         {
@@ -71,22 +87,41 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         isTestFinished = false;
         // Инициализация элементов
         viewInit();
+        currentQuestion = 0;
+        testSize = questionList.size();
 
-        // TODO Сюда помещается тема теста (Через Intent должна передаваться?)
-        String theme = "Тестовая тема";
-        String welcomeString = "Вы хотите пройти тестирование по теме: \"" + theme + "\"?";
+        String welcomeString = "Количество вопросов в тесте: " + testSize +
+                "\nТвой прошлый лучший результат: " + user.getTestsBests()[testId];
         textViewQuestion1.setText(welcomeString);
 
-        // TODO Загрузка прошлых результатов
 
-        // TODO Где-то здесь получаются данные теста
-        test = generateTestForTest();
-        currentQuestion = 0;
-        testSize = test.size();
+
         answers = new ArrayList<>();
         for (int i = 0; i < testSize; i++) answers.add(null);
 
+        // TODO Фиксация результатов тестирования (не забыть отправку на сервер, если залогинен пользователь), фиксация очков
+
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        data = Data.getInstance();
+        user = data.getUser();
+        System.out.println("Initial user: " + user);
+        //TODO Штуки, которые могут понадобиться при возобновлении работы
+        System.out.println(data.isLogin());
+        textViewScore.setText(Integer.toString(user.getScore()));
+        ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
+        if (data.isLogin())
+        {
+            buttonProfile.setImageResource(R.drawable.ic_profile_login);
+        }
+        else {
+            buttonProfile.setImageResource(R.drawable.ic_profile);
+        }
+    }
+
 
     private void viewInit() {
         buttonControl = (Button) findViewById(R.id.buttonControl);
@@ -136,7 +171,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
             else {
-
                 //TODO Подтверждение завершения
                 answers.set(currentQuestion, getAnswer());
                 setUpLayout(true);
@@ -158,6 +192,11 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 buttonReview.setVisibility(View.VISIBLE);
                 buttonReview.setClickable(true);
 
+                ratingBar = (RatingBar) findViewById(R.id.ratingBarTest);
+                ratingBar.setStepSize(1);
+                ratingBar.setVisibility(View.VISIBLE);
+                ratingBar.setClickable(true);
+
                 buttonControl.setText("Вернуться к темам");
                 isTestFinished = true;
             }
@@ -167,7 +206,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 currentQuestion += 1;
             else
                 Toast.makeText(getApplicationContext(), "Последний вопрос теста", Toast.LENGTH_SHORT).show();
-            showQuestion(test.get(currentQuestion));
+            showQuestion(questionList.get(currentQuestion));
             if (answers.get(currentQuestion) != null)
                 setAnswer();
             else {
@@ -180,7 +219,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 currentQuestion -= 1;
             else
                 Toast.makeText(getApplicationContext(), "Первый вопрос теста", Toast.LENGTH_SHORT).show();
-            showQuestion(test.get(currentQuestion));
+            showQuestion(questionList.get(currentQuestion));
             if (answers.get(currentQuestion) != null)
                 setAnswer();
             else {
@@ -190,7 +229,10 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         } else if (id == R.id.buttonReview) {
             if (isTestFinished) {
-                // TODO КНОПКА ОТЗЫВА
+                // TODO формирование ревью
+                RetrofitService retrofitService = data.getRetrofitService();
+                Review review = new Review();
+                review.setEvaluation((int) ratingBar.getRating());
                 Toast.makeText(getApplicationContext(), "ОТЗЫВ", Toast.LENGTH_SHORT).show();
             } else {
                 buttonControl.setVisibility(View.VISIBLE);
@@ -204,7 +246,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 buttonPrev.setClickable(true);
                 questionCounter.setVisibility(View.VISIBLE);
                 questionCounter.setText((currentQuestion + 1) + "/" + testSize);
-                showQuestion(test.get(currentQuestion));
+                showQuestion(questionList.get(currentQuestion));
                 editTextAnswer.setVisibility(View.VISIBLE);
                 editTextAnswer.setClickable(true);
             }
@@ -231,7 +273,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     // Извлекает ответ из представлений
     private String getAnswer() {
-        if (test.get(currentQuestion).getType() == 1) {
+        if (questionList.get(currentQuestion).getType() == 1) {
             return editTextAnswer.getText().toString();
         } else {
             if (rb1.isChecked())
@@ -250,7 +292,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private void setAnswer() {
         if (answers.get(currentQuestion) != null) {
             String answer = answers.get(currentQuestion);
-            if (test.get(currentQuestion).getType() == 1)
+            if (questionList.get(currentQuestion).getType() == 1)
                 editTextAnswer.setText(answers.get(currentQuestion));
             else {
                 if (answer.equals("0"))
@@ -297,12 +339,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private int check() {
         int result = 0;
         for (int i = 0; i < testSize; i++)
-            if (test.get(i).getType() == 1) {
-                if (test.get(i).getAnswer().equals(answers.get(i)))
+            if (questionList.get(i).getType() == 1) {
+                if (questionList.get(i).getAnswer().equals(answers.get(i)))
                     result += 1;
             } else {
                 if (answers.get(i) != null)
-                    if (test.get(i).getRightAnswer() == Integer.parseInt(answers.get(i)))
+                    if (questionList.get(i).getRightAnswer() == Integer.parseInt(answers.get(i)))
                         result += 1;
             }
 

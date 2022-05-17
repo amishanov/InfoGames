@@ -1,8 +1,12 @@
 package com.example.infogames;
 
+import android.content.Context;
+
+import com.example.infogames.model.Review;
 import com.example.infogames.model.User;
 import com.example.infogames.model.UserData;
 import com.example.infogames.retrofit.RetrofitService;
+import com.example.infogames.retrofit.ReviewService;
 import com.example.infogames.retrofit.UserService;
 
 import retrofit2.Call;
@@ -58,10 +62,11 @@ public class Data {
         return isLogin;
     }
 
+
     public void sendUserData() {
         //TODO Отправка
         UserService userService = retrofitService.getRetrofit().create(UserService.class);
-        UserData userData = new UserData(user.getToken(), user.getScore(), user.getAccess(),
+        UserData userData = new UserData(user.getToken(), user.getScore(), user.getProgress(), user.getAccess(),
                 user.getTestsBests(), user.getGamesBests());
         userService.updateData(userData).enqueue(new Callback<Void>() {
             @Override
@@ -78,5 +83,29 @@ public class Data {
             }
         });
     }
+
+    public String sendReview(Review review) {
+        // TODO переделать под синхронный поток (Пользователь должен знать, что подключение не работает)
+        ReviewService reviewService = retrofitService.getRetrofit().create(ReviewService.class);
+        user.setToken("login60.2659194162054871");
+        reviewService.createReview(user.getToken(), review).enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.code() == 201)
+                    System.out.println("SendReview: PASS");
+                else
+                    System.out.println("SendReview: FAILED 409");
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                System.out.println("sendUserData: Failed, " + t);
+            }
+
+        });
+
+        return "";
+    }
+
 
 }

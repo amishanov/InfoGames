@@ -9,25 +9,28 @@ public class User {
     private String password;
     private String token;
     private int score;
+    private Boolean[] progress;
     private Boolean[] access;
     private Integer[] testsBests;
     private Integer[] gamesBests;
 
     public User() {
         //TODO Убрать, так как должно происходить чтение из файла
-        access = new Boolean[]{true, false, false, false, false, false};
+        progress = new Boolean[]{false, false, false, false, false};
+        access = new Boolean[]{true, true, false, false, false, false};
         testsBests = new Integer[]{0, 0, 0, 0, 0, 0};
         gamesBests = new Integer[]{0};
     }
 
     public User(String id, String email, String login, String password,
-                String token, int score, Boolean[] access,
+                String token, int score, Boolean[] progress, Boolean[] access,
                 Integer[] testsBests, Integer[] gamesBests) {
         this.id = id;
         this.email = email;
         this.login = login;
         this.password = password;
         this.token = token;
+        this.progress = progress;
         this.score = score;
         this.access = access;
         this.testsBests = testsBests;
@@ -35,13 +38,14 @@ public class User {
     }
 
     public User(String email, String login,
-                String password, String token, int score,
+                String password, String token, int score, Boolean[] progress,
                 Boolean[] access, Integer[] testsBests, Integer[] gamesBests) {
         this.email = email;
         this.login = login;
         this.password = password;
         this.token = token;
         this.score = score;
+        this.progress = progress;
         this.access = access;
         this.testsBests = testsBests;
         this.gamesBests = gamesBests;
@@ -132,6 +136,14 @@ public class User {
 
     public int getScore() {
         return score;
+    }
+
+    public Boolean[] getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Boolean[] progress) {
+        this.progress = progress;
     }
 
     public Boolean[] getAccess() {

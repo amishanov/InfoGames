@@ -3,15 +3,17 @@ package com.example.infogames.model;
 public class UserData {
     private String token;
     private int score;
+    private Boolean[] progress;
     private Boolean[] access;
     private Integer[] testsBests;
     private Integer[] gamesBests;
 
     public UserData() {}
 
-    public UserData(String token, int score, Boolean[] access, Integer[] testsBests, Integer[] gamesBests) {
+    public UserData(String token, int score, Boolean[] progress, Boolean[] access, Integer[] testsBests, Integer[] gamesBests) {
         this.token = token;
         this.score = score;
+        this.progress = progress;
         this.access = access;
         this.testsBests = testsBests;
         this.gamesBests = gamesBests;
@@ -31,6 +33,14 @@ public class UserData {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Boolean[] getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Boolean[] progress) {
+        this.progress = progress;
     }
 
     public Boolean[] getAccess() {

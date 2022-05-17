@@ -1,4 +1,4 @@
-package com.example.infogames;
+package com.example.infogames.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.infogames.Data;
+import com.example.infogames.R;
 import com.example.infogames.model.User;
 import com.example.infogames.retrofit.RetrofitService;
 import com.example.infogames.retrofit.UserService;
@@ -124,9 +126,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         RetrofitService retrofitService = data.getRetrofitService();
         UserService userService = retrofitService.getRetrofit().create(UserService.class);
         // TODO Получение из User / Занесение данных
-        Boolean[] acc = {true, false, false, false, false, false};
-        Integer[] testsBests = {null, null, null, null, null, null};
-        Integer[] gamesBests = {0};
+        User currentUser = data.getUser();
         String loginReg = etRegLogin.getText().toString();
         String email = etRegEmail.getText().toString();
         String passwordReg = etRegPassword.getText().toString();
@@ -148,8 +148,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             if (hex.length() == 1) hexPasswordReg.append('0');
             hexPasswordReg.append(hex);
         }
-        User user = new User(email, loginReg, hexPasswordReg.toString(), "", 5, acc,
-                testsBests, gamesBests);
+        User user = new User(email, loginReg, hexPasswordReg.toString(), "", currentUser.getScore(), currentUser.getProgress(),
+                currentUser.getAccess(), currentUser.getTestsBests(), currentUser.getTestsBests());
         userService.createUser(user).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -161,6 +161,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     user.setToken(response.body());
                     System.out.println(user.getToken());
                     System.out.println(user);
+                    currentUser.clone(user);
                     buttonSignIn.performClick();
                 } else if (response.code() == 409) {
                     Toast.makeText(ProfileActivity.this,

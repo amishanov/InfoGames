@@ -1,4 +1,4 @@
-package com.example.infogames;
+package com.example.infogames.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,6 +12,9 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.infogames.Data;
+import com.example.infogames.ExpListAdapter;
+import com.example.infogames.R;
 import com.example.infogames.model.User;
 
 import java.util.ArrayList;
@@ -50,6 +53,8 @@ public class ThemesActivity extends AppCompatActivity {
         TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
         textViewScore.setText(Integer.toString(user.getScore()));
 
+
+
         if (data.isLogin())
         {
             ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
@@ -75,6 +80,23 @@ public class ThemesActivity extends AppCompatActivity {
         expandableListView.setAdapter(adapter);
 
         initListData();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        data = Data.getInstance();
+        user = data.getUser();
+        //TODO Штуки, которые могут понадобиться при возобновлении работы
+        System.out.println(data.isLogin());
+        ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
+        if (data.isLogin())
+        {
+            buttonProfile.setImageResource(R.drawable.ic_profile_login);
+        }
+        else {
+            buttonProfile.setImageResource(R.drawable.ic_profile);
+        }
     }
 
     public void click(View v) {

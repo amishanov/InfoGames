@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -59,6 +60,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         System.out.println(user);
         TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
         textViewScore.setText(Integer.toString(user.getScore()));
+
+        if (data.isLogin())
+        {
+            ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
+            buttonProfile.setImageResource(R.drawable.ic_profile_login);
+        }
 
 
         isTestFinished = false;

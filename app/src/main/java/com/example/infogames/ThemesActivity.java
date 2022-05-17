@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +49,12 @@ public class ThemesActivity extends AppCompatActivity {
         user = data.getUser();
         TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
         textViewScore.setText(Integer.toString(user.getScore()));
+
+        if (data.isLogin())
+        {
+            ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
+            buttonProfile.setImageResource(R.drawable.ic_profile_login);
+        }
 
         expandableListView = findViewById(R.id.expListView);
         listGroup = new ArrayList<>();

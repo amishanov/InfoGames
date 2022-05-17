@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.example.infogames.model.User;
@@ -46,10 +45,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             setContentView(R.layout.sign_in);
             initElementsLogin();
         }
-        toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        initToolbar();
     }
 
     @Override
@@ -57,16 +53,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         int id = view.getId();
         if (id == R.id.buttonSignUp){
             setContentView(R.layout.sing_up);
-            toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            initToolbar();
             initElementsReg();
 
         } else if (id == R.id.buttonSignIn) {
             setContentView(R.layout.sign_in);
-            toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            initToolbar();
             initElementsLogin();
 
         } else if (id == R.id.buttonLogin) {
@@ -80,22 +72,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
-            StringBuilder hexString = new StringBuilder();
+            StringBuilder hexPassword = new StringBuilder();
             for (byte aByteData : password.getBytes()) {
                 String hex = Integer.toHexString(0xff & aByteData);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
+                if (hex.length() == 1) hexPassword.append('0');
+                hexPassword.append(hex);
             }
-            userService.getUserByLogin(login+":"+password).enqueue(new Callback<User>() {
+            userService.getUserByLogin(login+":"+ hexPassword).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     if (response.code() == 200) {
                         User user = response.body();
                         System.out.println(user);
                         setContentView(R.layout.activity_profile);
-                        toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
-                        setSupportActionBar(toolbar);
-                        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                        initToolbar();
                         initElementsProf();
                         data.setIsLogin(true);
 
@@ -113,7 +103,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(ProfileActivity.this,
                             "Ой-ой, не могу подключиться к серверу", Toast.LENGTH_LONG).show();
                     Logger.getLogger(ProfileActivity.class.getName()).log(Level.SEVERE, "", t);
-                    System.out.println("FAILED");
+                    System.out.println("Login: FAILED");
                 }
             });
 
@@ -122,18 +112,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         } else if (id == R.id.buttonSignOut) {
             setContentView(R.layout.sign_in);
-            toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            initToolbar();
             initElementsLogin();
+            //TODO обнулить токен User
             data.setIsLogin(false);
+            //TODO Обновить пользовителя
         }
     }
 
     private void Registration() {
         RetrofitService retrofitService = data.getRetrofitService();
         UserService userService = retrofitService.getRetrofit().create(UserService.class);
-        // TODO Получение из User
+        // TODO Получение из User / Занесение данных
         Boolean[] acc = {true, false, false, false, false, false};
         Integer[] testsBests = {null, null, null, null, null, null};
         Integer[] gamesBests = {0};
@@ -152,13 +142,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        StringBuilder hexString = new StringBuilder();
+        StringBuilder hexPasswordReg = new StringBuilder();
         for (byte aByteData : passwordReg.getBytes()) {
             String hex = Integer.toHexString(0xff & aByteData);
-            if (hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
+            if (hex.length() == 1) hexPasswordReg.append('0');
+            hexPasswordReg.append(hex);
         }
-        User user = new User(email, loginReg, passwordReg, "", 5, acc,
+        User user = new User(email, loginReg, hexPasswordReg.toString(), "", 5, acc,
                 testsBests, gamesBests);
         userService.createUser(user).enqueue(new Callback<String>() {
             @Override
@@ -218,5 +208,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void initElementsProf() {
         buttonSignOut = (Button) findViewById(R.id.buttonSignOut);
         buttonSignOut.setOnClickListener(this);
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

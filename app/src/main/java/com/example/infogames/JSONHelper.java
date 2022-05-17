@@ -1,4 +1,4 @@
-package com.example.infogames.model;
+package com.example.infogames;
 
 public class JSONHelper {
     private static final String FILE_USER = "user.json";

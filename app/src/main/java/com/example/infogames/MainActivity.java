@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private User user;
     RatingBar ratingBar;
     private Toolbar toolbar;
+    //TODO во всех активостях раскидать задачи между onStart и onCreate
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +48,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         data = Data.getInstance();
         user = data.getUser();
         System.out.println("Initial user: " + user);
+        //TODO Проверка на то, залогинен ли пользователь, синхронизация материалов
+        System.out.println(data.isLogin());
+        if (data.isLogin())
+        {
+            ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
+            buttonProfile.setImageResource(R.drawable.ic_profile_login);
+        }
         user.setScore(5);
         TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
         textViewScore.setText(Integer.toString(user.getScore()));
@@ -78,6 +86,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println("FAILED");
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        data = Data.getInstance();
+        user = data.getUser();
+        System.out.println("Initial user: " + user);
+        //TODO Проверка на то, залогинен ли пользователь, синхронизация материалов
+        System.out.println(data.isLogin());
+        if (data.isLogin())
+        {
+            ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
+            buttonProfile.setImageResource(R.drawable.ic_profile_login);
+        }
+        else {
+            ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
+            buttonProfile.setImageResource(R.drawable.ic_profile);
+        }
     }
 
     // Метод для настройки кнопок

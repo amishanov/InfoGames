@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -32,11 +33,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Data data;
     User user;
-    RatingBar ratingBar;
     Toolbar toolbar;
     RetrofitService retrofitService;
     TextView textViewScore;
     List<Theme> themes;
+    List<Test> tests;
     //TODO во всех активостях раскидать задачи между onStart и onCreate
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,64 +48,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonSetUp();
         textViewScore = (TextView) findViewById(R.id.textViewScore);
 
-
-        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
-        ratingBar.setStepSize(1);
-
-        // TODO Изначальная инициализация файлов
         data = Data.getInstance();
         user = data.getUser();
-        System.out.println("Initial user: " + user);
-        //TODO Проверка на то, залогинен ли пользователь, синхронизация материалов
-        System.out.println(data.isLogin());
-        if (data.isLogin())
-        {
-            ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
-            buttonProfile.setImageResource(R.drawable.ic_profile_login);
+        retrofitService = data.getRetrofitService();
+
+        // Здесь скачивание данных
+
+        if (!JSONHelper.check(this)) {
+            JSONHelper.exportUserToJSON(this, user);
+            // TODO вместо null сделать экспорт из материалов ресурсов
+            JSONHelper.exportThemesToJSON(this, null);
+            JSONHelper.exportTestsToJSON(this, null);
+        } else {
+            user.clone(JSONHelper.importUserFromJSON(this));
+//            user.getAccess()[1] = false;
+//            JSONHelper.exportUserToJSON(this, user);
         }
-        user.setScore(5);
 
+        if (user.getToken() != null) {
+            data.setIsLogin(true);
+        }
+        // TODO получение данных тем и тестов с сервера
+//        initialStart();
 
-//        RetrofitService retrofitService = data.getRetrofitService();
-//        RetrofitService retrofitService = new RetrofitService();
-//        UserService userService = retrofitService.getRetrofit().create(UserService.class);
-//
-//        userService.getUserByToken("token").enqueue(new Callback<User>() {
-//            @Override
-//            public void onResponse(Call<User> call, Response<User> response) {
-//                if (response.isSuccessful()) {
-//                    System.out.println("Token PASS");
-//                    User u = response.body();
-//                    MainActivity.this.user.clone(u);
-//                    System.out.println(MainActivity.this.user);
-//                    // Как ниже представлено делать обновление данных
-//                    MainActivity.this.user.setScore(222);
-//                    User a = MainActivity.this.user;
-//                    UserData userData = new UserData(a.getToken(), a.getScore(), a.getAccess(), a.getTestsBests(), a.getGamesBests());
-////                Data.getInstance().setUser(response.body());
-//                    textViewScore.setText(Integer.toString(MainActivity.this.user.getScore()));
-//                }
-//
-//            }
-//            @Override
-//            public void onFailure(Call<User> call, Throwable t) {
-//                Toast.makeText(MainActivity.this, "Can not load profile", Toast.LENGTH_LONG).show();
-//                Logger.getLogger(MainActivity.class.getName()).log(Level.SEVERE, "", t);
-//                System.out.println("FAILED");
-//            }
-//        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        data = Data.getInstance();
-        user = data.getUser();
-        retrofitService = data.getRetrofitService();
-        System.out.println("Initial user: " + user);
         textViewScore.setText(Integer.toString(user.getScore()));
-        //TODO Проверка на то, залогинен ли пользователь, синхронизация материалов
-        System.out.println(data.isLogin());
         ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
         if (data.isLogin())
         {
@@ -114,6 +86,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             buttonProfile.setImageResource(R.drawable.ic_profile);
         }
     }
+
+    // Получает теоретический материал и материал для тестирования
+    public void initialStart() {
+        TestService testService = retrofitService.getRetrofit().create(TestService.class);
+        testService.getTests().enqueue(new Callback<List<Test>>() {
+                @Override
+                public void onResponse(Call<List<Test>> call, Response<List<Test>> response) {
+                    if (response.code() == 200) {
+                        System.out.println("GET TEST: PASS");
+//                        tests = response.body();
+                        JSONHelper.exportTestsToJSON(MainActivity.this, response.body());
+//                        System.out.println(tests.get(0).getQuestionList().get(0));
+//                        System.out.println(tests.get(1));
+
+                    } else if (response.code() == 404){
+                        System.out.println("GET TEST NOT FOUND");
+                    } else {
+                        System.out.println("GET TEST SOMETHING GOES WRONG...");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Test>> call, Throwable t) {
+                    System.out.println("GET TEST FAILED");
+                    Toast.makeText(MainActivity.this, "" +
+                            "Не удалось подключиться к серверу для синхронизации тестов",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        RetrofitService retrofitService = data.getRetrofitService();
+        ThemeService themeService = retrofitService.getRetrofit().create(ThemeService.class);
+        themeService.getThemes().enqueue(new Callback<List<Theme>>() {
+                @Override
+                public void onResponse(Call<List<Theme>> call, Response<List<Theme>> response) {
+                    if (response.code() == 200) {
+//                        MainActivity.this.themes = response.body();
+                        JSONHelper.exportThemesToJSON(MainActivity.this, response.body());
+                        System.out.println("getThemes: themes was found");
+                    } else if (response.code() == 404) {
+                        System.out.println("Error: Themes was not found");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Theme>> call, Throwable t) {
+                    System.out.println("Error: не удалось подключиться для получения тем");
+                    Toast.makeText(MainActivity.this, "" +
+                                    "Не удалось подключиться к серверу для синхронизации тем",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+    }
+
 
     // Метод для настройки кнопок
     private void buttonSetUp() {
@@ -133,33 +158,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonLearn) {
+            System.out.println("user: " + user);
+            System.out.println("data user: " + data.getUser());
             Intent intent = new Intent(this, ThemesActivity.class);
             startActivity(intent);
         } else if (id == R.id.buttonPlay) {
             Intent intent = new Intent(this, TestActivity.class);
-//            TestService testService = retrofitService.getRetrofit().create(TestService.class);
-//            testService.getTests().enqueue(new Callback<List<Test>>() {
-//                @Override
-//                public void onResponse(Call<List<Test>> call, Response<List<Test>> response) {
-//                    if (response.code() == 200) {
-//                        System.out.println("GET TEST SUCC");
-//                        List<Test> tests = response.body();
-//                        JSONHelper.exportTestsToJSON(MainActivity.this, tests);
-//                        System.out.println(tests.get(0).getQuestionList().get(0));
-//                        System.out.println(tests.get(1));
-//
-//                    } else if (response.code() == 404){
-//                        System.out.println("GET TEST NOT FOUND");
-//                    } else {
-//                        System.out.println("GET TEST SOMETHING GOES WRONG...");
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<List<Test>> call, Throwable t) {
-//                    System.out.println("GET TEST FAILED");
-//                }
-//            });
             //TODO передавать реальный ID/реальный тест теста
             List<Test> tests = JSONHelper.importTestsFromJSON(this);
             intent.putExtra("test", tests.get(0));
@@ -170,96 +174,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         }  else if (id == R.id.te) {
-            //TODO передавать реальный ID теории
-            RetrofitService retrofitService = data.getRetrofitService();
-            ThemeService themeService = retrofitService.getRetrofit().create(ThemeService.class);
-//            List<Theme> themes = null;
-//            try {
-//                Response response = themeService.getThemes().execute();
-//                if (response.code() == 200) {
-//                    themes = (List<Theme>) response.body();
-//                    System.out.println("Sync themes: Pass");
-//                } else if (response.code() == 404) {
-//                    System.out.println("Sync themes: Failed");
-//                }
-//            } catch (IOException e) {
-//                System.out.println("sync themes cant connect");
-//                e.printStackTrace();
-//            }
-//
-//            JSONHelper.exportThemesToJSON(this, themes);
-//            themes = JSONHelper.importThemesFromJSON(this);
-//            themeService.getThemes().enqueue(new Callback<List<Theme>>() {
-//                @Override
-//                public void onResponse(Call<List<Theme>> call, Response<List<Theme>> response) {
-//                    if (response.code() == 200) {
-//                        MainActivity.this.themes = response.body();
-//                        JSONHelper.exportThemesToJSON(MainActivity.this, themes);
-//                        System.out.println("getThemes: themes was found");
-//                    } else if (response.code() == 404) {
-//                        System.out.println("Error: Themes was not found");
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<List<Theme>> call, Throwable t) {
-//                    System.out.println("Error: не удалось подключиться для получения тем");
-//                }
-//            });
-
-            //            TestService testService = retrofitService.getRetrofit().create(TestService.class);
-//            testService.getTests().enqueue(new Callback<List<Test>>() {
-//                @Override
-//                public void onResponse(Call<List<Test>> call, Response<List<Test>> response) {
-//                    if (response.code() == 200) {
-//                        System.out.println("GET TEST SUCC");
-//                        List<Test> tests = response.body();
-//                        JSONHelper.exportTestsToJSON(MainActivity.this, tests);
-//                        System.out.println(tests.get(0).getQuestionList().get(0));
-//                        System.out.println(tests.get(1));
-//
-//                    } else if (response.code() == 404){
-//                        System.out.println("GET TEST NOT FOUND");
-//                    } else {
-//                        System.out.println("GET TEST SOMETHING GOES WRONG...");
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<List<Test>> call, Throwable t) {
-//                    System.out.println("GET TEST FAILED");
-//                }
-//            });
-            Intent intent = new Intent(this, TheoryActivity.class);
-            themes = JSONHelper.importThemesFromJSON(this);
-            Theme theme = themes.get(0);
-            System.out.println(theme);
-            intent.putExtra("theory", theme);
-            intent.putExtra("theoryId", 0);
-            startActivity(intent);
-
-//            RetrofitService retrofitService = data.getRetrofitService();
-//            Review review = new Review();
-//            review.setEvaluation((int) ratingBar.getRating());
-//            review.setMaterialId(2);
-//            review.setType("Theme");
-//            ReviewService reviewService = retrofitService.getRetrofit().create(ReviewService.class);
-//            reviewService.createReview(review).enqueue(new Callback<Void>() {
-//                @Override
-//                public void onResponse(Call<Void> call, Response<Void> response) {
-//                    System.out.println("Review send SUCC");
-//
-//                }
-//
-//                @Override
-//                public void onFailure(Call<Void> call, Throwable t) {
-//                    System.out.println("Review send FAILED" + t);
-//                }
-//            });
-//            List<Test> tests = JSONHelper.importTestsFromJSON(this);
-//            System.out.println(tests.get(0).getQuestionList().get(0));
-
-
 //            CustomDialogFragment dialog = new CustomDialogFragment();
 //            dialog.show(getSupportFragmentManager(), "custom");
 //            Log.i("MYTAG", user.toString());

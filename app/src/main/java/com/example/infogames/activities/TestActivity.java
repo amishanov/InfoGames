@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.infogames.Data;
+import com.example.infogames.JSONHelper;
 import com.example.infogames.R;
 import com.example.infogames.model.Question;
 import com.example.infogames.model.Review;
@@ -90,8 +91,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         currentQuestion = 0;
         testSize = questionList.size();
 
-        String welcomeString = "Количество вопросов в тесте: " + testSize +
-                "\nТвой прошлый лучший результат: " + user.getTestsBests()[testId];
+        String welcomeString = "Количество вопросов в тесте: " + testSize;
+        if (user.getTestsBests()[testId] != null)
+            welcomeString += "\nТвой прошлый лучший результат: " + user.getTestsBests()[testId] ;
         textViewQuestion1.setText(welcomeString);
 
 
@@ -177,9 +179,41 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 editTextAnswer.setVisibility(View.INVISIBLE);
                 editTextAnswer.setClickable(false);
                 int result = check();
-                textViewQuestion1.setText("Результат вашего тестирования: " + result);
 
-                // TODO Отображение предыдущих результатов
+                String strResult = "Результат твоего тестирования: " + result;
+                Integer prevBest = user.getTestsBests()[testId];
+                if (prevBest == null) {
+                    strResult += "\nТы поставил новый рекорд, так держать!";
+                    user.setScore(user.getScore()+result*2);
+                    textViewScore.setText(Integer.toString(user.getScore()));
+                    Toast.makeText(this, "Очки зачислены", Toast.LENGTH_LONG).show();
+                    user.getTestsBests()[testId] = result;
+                    JSONHelper.exportUserToJSON(this, user);
+                    if (data.isLogin()) {
+                        data.sendUserData();
+                    }
+                } else if (prevBest > result) {
+                    strResult += "\nВ прошлый раз ты справился лучше... Повтори материал и поробуй ещё раз!";
+                } else if (prevBest == result && result == testSize) {
+                    strResult += "\nТы снова выбил  максимум... Так держать!";
+                }
+                else if (prevBest == result) {
+                    strResult += "\nВ прошлый раз т... Повтори материал и поробуй ещё раз!";
+                }
+                else {
+                    strResult += "\nТы поставил новый рекорд, так держать!";
+                    user.setScore(user.getScore()+result*2 - prevBest*2);
+                    textViewScore.setText(Integer.toString(user.getScore()));
+                    user.getTestsBests()[testId] = result;
+                    Toast.makeText(this, "Очки зачислены", Toast.LENGTH_LONG).show();
+                    JSONHelper.exportUserToJSON(this, user);
+                    if (data.isLogin()) {
+                        data.sendUserData();
+                    }
+                }
+                textViewQuestion1.setText(strResult);
+
+
                 // TODO Фиксация результатов
 
                 buttonNext.setVisibility(View.INVISIBLE);
@@ -233,7 +267,10 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 RetrofitService retrofitService = data.getRetrofitService();
                 Review review = new Review();
                 review.setEvaluation((int) ratingBar.getRating());
-                Toast.makeText(getApplicationContext(), "ОТЗЫВ", Toast.LENGTH_SHORT).show();
+                review.setType(1);
+                review.setMaterialId(testId);
+                data.sendReview(review);
+                Toast.makeText(getApplicationContext(), "Спасибо за отзыв!", Toast.LENGTH_SHORT).show();
             } else {
                 buttonControl.setVisibility(View.VISIBLE);
                 buttonControl.setClickable(true);

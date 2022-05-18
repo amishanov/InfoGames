@@ -7,7 +7,9 @@ import com.example.infogames.model.Theme;
 import com.example.infogames.model.User;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,6 +19,15 @@ public class JSONHelper {
     private static final String FILE_USER = "user.json";
     private static final String FILE_TESTS = "tests.json";
     private static final String FILE_THEMES = "themes.json";
+
+    public static boolean check(Context context) {
+        try(FileInputStream fileInputStream = context.openFileInput(FILE_USER)) {
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static boolean exportUserToJSON(Context context, User user) {
         Gson gson = new Gson();
@@ -113,7 +124,6 @@ public class JSONHelper {
     public static List<Theme> importThemesFromJSON(Context context) {
         try(FileInputStream fileInputStream = context.openFileInput(FILE_THEMES);
             InputStreamReader streamReader = new InputStreamReader(fileInputStream)){
-
             Gson gson = new Gson();
             ThemesItems themesItems = gson.fromJson(streamReader, ThemesItems.class);
             return themesItems.getThemes();

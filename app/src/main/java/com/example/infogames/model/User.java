@@ -16,8 +16,8 @@ public class User {
 
     public User() {
         //TODO Убрать, так как должно происходить чтение из файла
-        progress = new Boolean[]{false, false, false, false, false};
-        access = new Boolean[]{true, true, false, false, false, false};
+        progress = new Boolean[]{false, false, false, false, false, false};
+        access = new Boolean[]{true, false, false, false, false, false};
         testsBests = new Integer[]{0, 0, 0, 0, 0, 0};
         gamesBests = new Integer[]{0};
     }
@@ -59,6 +59,7 @@ public class User {
         this.password = user.password;
         this.token = user.token;
         this.score = user.score;
+        this.progress = Arrays.copyOf(user.progress, user.progress.length);
         this.access = Arrays.copyOf(user.access, user.access.length);
         this.testsBests = Arrays.copyOf(user.testsBests, user.testsBests.length);
         this.gamesBests = Arrays.copyOf(user.gamesBests, user.gamesBests.length);
@@ -72,6 +73,7 @@ public class User {
                 ", \"password\":\"" + password + '\"' +
                 ", \"token\":\"" + token + '\"' +
                 ", \"score\":" + score +
+                ", \"progress\":" + Arrays.toString(progress) +
                 ", \"access\":" + Arrays.toString(access) +
                 ", \"testsBests\":" + Arrays.toString(testsBests) +
                 ", \"gamesBests\":" + Arrays.toString(gamesBests) +

@@ -15,10 +15,13 @@
         android:theme="@style/Theme.InfoGames"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.GameActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.TheoryActivity"
             android:exported="false"
             android:parentActivityName=".activities.ThemesActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false"
@@ -40,6 +43,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

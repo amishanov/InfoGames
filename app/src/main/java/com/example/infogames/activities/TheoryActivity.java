@@ -85,6 +85,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         int id = view.getId();
         System.out.println(theoryId);
         System.out.println(user.getProgress()[0]);
+        System.out.println(user.getProgress().length);
         if (id == R.id.buttonFinishTheory) {
             if (!user.getProgress()[theoryId]) {
                 user.getProgress()[theoryId] = true;

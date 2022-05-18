@@ -15,6 +15,7 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
     Context context;
     List<String> listGroup;
     HashMap<String, List<String>> listItem;
+    Boolean[] access;
 
     public ExpListAdapter(Context context, List<String> listGroup,
                           HashMap<String, List<String>>listItem) {
@@ -68,6 +69,10 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
         }
         TextView textView = view.findViewById(R.id.list_parent);
         textView.setText(group);
+        if (access[i])
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_check, 0);
+        else
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_lock, 0);
         return view;
     }
 
@@ -87,5 +92,13 @@ public class ExpListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public Boolean[] getAccess() {
+        return access;
+    }
+
+    public void setAccess(Boolean[] access) {
+        this.access = access;
     }
 }

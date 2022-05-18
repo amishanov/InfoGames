@@ -1,8 +1,10 @@
 package com.example.infogames.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.infogames.Data;
+import com.example.infogames.JSONHelper;
 import com.example.infogames.R;
 import com.example.infogames.model.User;
 import com.example.infogames.retrofit.RetrofitService;
@@ -90,6 +93,31 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         initToolbar();
                         initElementsProf();
                         data.setIsLogin(true);
+                        AlertDialog.Builder aBuilder = new AlertDialog.Builder(ProfileActivity.this);
+                        aBuilder.setMessage("Выбери, данные откуда будут использоваться далее")
+                                .setCancelable(false)
+                                .setPositiveButton("Приложение", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int btId) {
+                                        data.getUser().setLogin(user.getLogin());
+                                        data.getUser().setEmail(user.getEmail());
+                                        data.getUser().setPassword(user.getPassword());
+                                        data.getUser().setToken(user.getToken());
+                                        JSONHelper.exportUserToJSON(ProfileActivity.this, data.getUser());
+                                        data.sendUserData();
+                                    }
+                                })
+                                .setNegativeButton("Сервер", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int btId) {
+                                        data.getUser().clone(user);
+                                        JSONHelper.exportUserToJSON(ProfileActivity.this, data.getUser());
+                                    }
+                                });
+                        AlertDialog alert = aBuilder.create();
+                        alert.setTitle("Синхронизация");
+                        alert.show();
+
 
                     } else if (response.code() == 404) {
                         Toast.makeText(ProfileActivity.this,
@@ -116,9 +144,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             setContentView(R.layout.sign_in);
             initToolbar();
             initElementsLogin();
-            //TODO обнулить токен User
+            data.sendUserData();
+            data.getUser().setToken(null);
+            JSONHelper.exportUserToJSON(this, data.getUser());
             data.setIsLogin(false);
-            //TODO Обновить пользовителя
         }
     }
 
@@ -148,20 +177,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             if (hex.length() == 1) hexPasswordReg.append('0');
             hexPasswordReg.append(hex);
         }
-        User user = new User(email, loginReg, hexPasswordReg.toString(), "", currentUser.getScore(), currentUser.getProgress(),
+        User user = new User(email, loginReg, hexPasswordReg.toString(), null, currentUser.getScore(), currentUser.getProgress(),
                 currentUser.getAccess(), currentUser.getTestsBests(), currentUser.getTestsBests());
         userService.createUser(user).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.code() == 201) {
                     Toast.makeText(ProfileActivity.this,
-                            "SUCCCCC",
+                            "Ты успешно зарегистрирован!",
                             Toast.LENGTH_LONG).show();
-                    System.out.println("PASS");
-                    user.setToken(response.body());
-                    System.out.println(user.getToken());
-                    System.out.println(user);
-                    currentUser.clone(user);
+//                    System.out.println("PASS");
+//                    user.setToken(response.body());
+//                    System.out.println(user.getToken());
+//                    System.out.println(user);
+//                    currentUser.clone(user);
                     buttonSignIn.performClick();
                 } else if (response.code() == 409) {
                     Toast.makeText(ProfileActivity.this,

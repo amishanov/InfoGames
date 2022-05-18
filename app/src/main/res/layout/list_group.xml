@@ -10,6 +10,7 @@
         android:id="@+id/list_parent"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:drawableEnd="@drawable/ic_lock"
         android:text="AAAA"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"/>
 

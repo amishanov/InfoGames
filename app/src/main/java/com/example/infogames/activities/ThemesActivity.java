@@ -1,8 +1,11 @@
 package com.example.infogames.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
@@ -14,29 +17,34 @@ import android.widget.Toast;
 
 import com.example.infogames.Data;
 import com.example.infogames.ExpListAdapter;
+import com.example.infogames.JSONHelper;
 import com.example.infogames.R;
+import com.example.infogames.model.Test;
+import com.example.infogames.model.Theme;
 import com.example.infogames.model.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class ThemesActivity extends AppCompatActivity {
 
-    private Data data;
-    private User user;
-    private String[] expList = {"Тема 1: Общие понятия информатики", "Тема 2: Системы счисления",
+    Data data;
+    User user;
+    String[] expList = {"Тема 1: Общие понятия информатики", "Тема 2: Системы счисления",
             "Тема 3: Булева алгебра", "Тема 4: Логические функции",
             "Тема 5: Цифровая схемотехника",  "Тема 6: Алгоритмы и элементы программирования"};
-    private String[] innerList1 = {"1", "2", "3", "4", "Тест"};
+    String[] innerList1 = {"Теория", "Тестирование"};
     ExpandableListView expandableListView;
     List<String> listGroup;
     HashMap<String, List<String>> listItem;
     ExpListAdapter adapter;
 
-    private Toolbar toolbar;
+    Toolbar toolbar;
     TextView textViewScore;
-
+    List<Test> tests;
+    List<Theme> themes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +58,11 @@ public class ThemesActivity extends AppCompatActivity {
 
         data = Data.getInstance();
         user = data.getUser();
-        TextView textViewScore = (TextView) findViewById(R.id.textViewScore);
-        textViewScore.setText(Integer.toString(user.getScore()));
+        textViewScore = (TextView) findViewById(R.id.textViewScore);
+        System.out.println(user);
 
-
-
+        tests = JSONHelper.importTestsFromJSON(this);
+        themes = JSONHelper.importThemesFromJSON(this);
         if (data.isLogin())
         {
             ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
@@ -66,14 +74,61 @@ public class ThemesActivity extends AppCompatActivity {
         listItem = new HashMap<>();
 
         adapter = new ExpListAdapter(this, listGroup, listItem);
+        adapter.setAccess(user.getAccess());
+        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView expandableListView, View view,
+                                        int i, long l) {
+                if (user.getAccess()[i])
+                    return false;
+                else {
+                    AlertDialog.Builder aBuilder = new AlertDialog.Builder(ThemesActivity.this);
+                    aBuilder.setMessage("Ты желаешь приобрести эту тему за 10 очков?")
+                            .setCancelable(true)
+                            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int btId) {
+                                    if (!buyTheme(i, 10)) {
+                                        Toast.makeText(ThemesActivity.this,
+                                                "Не хватает очков!", Toast.LENGTH_LONG).show();
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int btId) {
+                                    dialogInterface.cancel();
+                                }
+                            });
+                    AlertDialog alert = aBuilder.create();
+                    alert.setTitle("Покупка темы");
+                    alert.show();
+                    return true;
+                }
+            }
+        });
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view,
                                         int groupPosition, int childPosition, long id) {
-                // TODO Переход на активность теории/теста
-                Toast.makeText(getApplicationContext(), listGroup.get(groupPosition)
-                        +listItem.get(listGroup.get(groupPosition)).get(childPosition),
-                        Toast.LENGTH_LONG).show();
+                if (childPosition == 0) {
+                    Intent intent = new Intent(ThemesActivity.this, TheoryActivity.class);
+//                    themes = JSONHelper.importThemesFromJSON(this);
+//                    Theme theme = themes.get(0);
+//                    System.out.println(theme);
+                    Theme theme = themes.get(groupPosition);
+                    System.out.println(groupPosition);
+                    intent.putExtra("theory", theme);
+                    intent.putExtra("theoryId", groupPosition);
+                    startActivity(intent);
+                } else if (childPosition == 1) {
+                    Intent intent = new Intent(ThemesActivity.this, TestActivity.class);
+                    Test test = tests.get(groupPosition);
+                    intent.putExtra("test", test);
+                    intent.putExtra("testId", groupPosition);
+                    startActivity(intent);
+                }
                 return false;
             }
         });
@@ -88,7 +143,7 @@ public class ThemesActivity extends AppCompatActivity {
         data = Data.getInstance();
         user = data.getUser();
         //TODO Штуки, которые могут понадобиться при возобновлении работы
-        System.out.println(data.isLogin());
+        textViewScore.setText(Integer.toString(user.getScore()));
         ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
         if (data.isLogin())
         {
@@ -99,34 +154,53 @@ public class ThemesActivity extends AppCompatActivity {
         }
     }
 
+    public boolean buyTheme(int i, int cost) {
+        if (user.getScore() < cost)
+            return false;
+        user.setScore(user.getScore()-cost);
+        user.getAccess()[i] = true;
+        textViewScore.setText(Integer.toString(user.getScore()));
+//        JSONHelper.exportUserToJSON(this, user);
+//        if (data.isLogin())
+//            data.sendUserData();
+        return true;
+    }
     public void click(View v) {
         Toast.makeText(getApplicationContext(), "AAAa", Toast.LENGTH_SHORT).show();
     }
 
     private void initListData() {
         // listGroup = expList
-        listGroup.add(expList[0]);
-        listGroup.add(expList[1]);
-        listGroup.add(expList[2]);
-        listGroup.add(expList[3]);
-        listGroup.add(expList[4]);
-        listGroup.add(expList[5]);
+        for (Theme theme: themes) {
+            listGroup.add(theme.getThemeName());
+        }
+//        listGroup.add(expList[0]);
+//        listGroup.add(expList[1]);
+//        listGroup.add(expList[2]);
+//        listGroup.add(expList[3]);
+//        listGroup.add(expList[4]);
+//        listGroup.add(expList[5]);
 
+
+        // TODO сделать, чтобы добовлялись
         List<String> list1 = new ArrayList<>();
         for (String item : innerList1) {
             list1.add(item);
         }
 
-        List<String> list2 = new ArrayList<>();
-        for (String item : innerList1) {
-            list2.add(item);
+        for (int i=0; i<listGroup.size(); i++) {
+            if (i > tests.size()) {
+                listItem.put(listGroup.get(i), Arrays.asList("Теория"));
+            } else {
+                listItem.put(listGroup.get(i), Arrays.asList("Теория", "Тест"));
+            }
         }
-        listItem.put(expList[0], list1);
-        listItem.put(expList[1], list1);
-        listItem.put(expList[2], list1);
-        listItem.put(expList[3], list1);
-        listItem.put(expList[4], list1);
-        listItem.put(expList[5], list1);
+//        listItem.put(expList[0], Arrays.asList(new String[]{"", ""}));
+//        listItem.put(expList[1], list1);
+//        listItem.put(expList[2], list1);
+//        listItem.put(expList[3], list1);
+//        listItem.put(expList[4], list1);
+//        listItem.put(expList[5], list1);
         adapter.notifyDataSetChanged();
     }
 

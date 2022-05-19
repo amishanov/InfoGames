@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         // TODO получение данных тем и тестов с сервера
 //        initialStart();
+//        user.setScore(100);
 
     }
 
@@ -145,13 +146,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button learnButton = (Button) findViewById(R.id.buttonLearn);
         Button playButton = (Button) findViewById(R.id.buttonPlay);
         ImageButton profileButton = (ImageButton) findViewById(R.id.buttonProfile);
-
         learnButton.setOnClickListener(this);
         playButton.setOnClickListener(this);
         profileButton.setOnClickListener(this);
-
-        Button a = (Button) findViewById(R.id.te);
-        a.setOnClickListener(this);
     }
 
     @Override
@@ -163,24 +160,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(this, ThemesActivity.class);
             startActivity(intent);
         } else if (id == R.id.buttonPlay) {
-            Intent intent = new Intent(this, TestActivity.class);
-            //TODO передавать реальный ID/реальный тест теста
-            List<Test> tests = JSONHelper.importTestsFromJSON(this);
-            intent.putExtra("test", tests.get(0));
-            intent.putExtra("testId", 0);
+            Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
-            // TODO Переход на игровую активность
         } else if (id == R.id.buttonProfile) {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
-        }  else if (id == R.id.te) {
-//            CustomDialogFragment dialog = new CustomDialogFragment();
-//            dialog.show(getSupportFragmentManager(), "custom");
-//            Log.i("MYTAG", user.toString());
-//            Toast.makeText(this, Integer.toString(user.getScore()), Toast.LENGTH_LONG).show();
-//            System.out.println(user);
-
         }
-
     }
 }

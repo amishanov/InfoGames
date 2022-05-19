@@ -105,7 +105,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
             }
 
         } else if (id == R.id.buttonReviewTheory) {
-            if (!data.isLogin()) {
+            if (data.isLogin()) {
             int evaluation = (int) ratingBar.getRating();
             Review review = new Review(2, theoryId, evaluation);
             data.sendReview(review);

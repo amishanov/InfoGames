@@ -160,9 +160,9 @@ public class ThemesActivity extends AppCompatActivity {
         user.setScore(user.getScore()-cost);
         user.getAccess()[i] = true;
         textViewScore.setText(Integer.toString(user.getScore()));
-//        JSONHelper.exportUserToJSON(this, user);
-//        if (data.isLogin())
-//            data.sendUserData();
+        JSONHelper.exportUserToJSON(this, user);
+        if (data.isLogin())
+            data.sendUserData();
         return true;
     }
     public void click(View v) {
@@ -192,7 +192,7 @@ public class ThemesActivity extends AppCompatActivity {
             if (i > tests.size()) {
                 listItem.put(listGroup.get(i), Arrays.asList("Теория"));
             } else {
-                listItem.put(listGroup.get(i), Arrays.asList("Теория", "Тест"));
+                listItem.put(listGroup.get(i), Arrays.asList("Теория", "Тестирование"));
             }
         }
 //        listItem.put(expList[0], Arrays.asList(new String[]{"", ""}));

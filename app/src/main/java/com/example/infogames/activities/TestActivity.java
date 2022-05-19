@@ -198,7 +198,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     strResult += "\nТы снова выбил  максимум... Так держать!";
                 }
                 else if (prevBest == result) {
-                    strResult += "\nВ прошлый раз т... Повтори материал и поробуй ещё раз!";
+                    strResult += "\nНеплохо, но ты не побил рекорд... Повтори материал и поробуй ещё раз!";
                 }
                 else {
                     strResult += "\nТы поставил новый рекорд, так держать!";

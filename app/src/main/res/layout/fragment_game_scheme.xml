@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".games.MainFragment">
+
+
+    <TextView
+        android:id="@+id/textViewCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gate"
+        android:gravity="center"
+        android:text="@string/code"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/buttonOut0"
+        android:layout_width="22dp"
+        android:layout_height="43dp"
+
+        android:layout_marginTop="58dp"
+        android:background="@drawable/halfround_button_green"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+    <ImageButton
+        android:id="@+id/buttonOut1"
+        android:layout_width="22dp"
+        android:layout_height="43dp"
+
+        android:background="@drawable/halfround_button_gray"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOut0"
+        android:contentDescription="TODO" />
+
+    <ImageButton
+        android:id="@+id/buttonOut2"
+        android:layout_width="22dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/halfround_button_gray"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOut1" />
+
+    <ImageButton
+        android:id="@+id/buttonOut3"
+        android:layout_width="22dp"
+        android:layout_height="43dp"
+
+        android:background="@drawable/halfround_button_gray"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOut2" />
+
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="245dp"
+        android:layout_height="302dp"
+        android:clickable="false"
+        android:src="@drawable/dc2_4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/buttonIn1"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="57dp"
+        android:background="@drawable/round_button_gray"
+        app:layout_constraintEnd_toStartOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+    <ImageButton
+        android:id="@+id/buttonIn2"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="176dp"
+        android:background="@drawable/round_button_gray"
+        app:layout_constraintEnd_toStartOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+
+    <Button
+        android:id="@+id/buttonEnterCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/red"
+        android:text="@string/enter_code"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

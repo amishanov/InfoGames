@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -76,8 +77,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         else {
             buttonProfile.setImageResource(R.drawable.ic_profile);
         }
-
-        textViewTheory.setText(theme.getTheory());
+        textViewTheory.setText(Html.fromHtml(theme.getTheory(), Html.FROM_HTML_MODE_COMPACT));
     }
 
     @Override

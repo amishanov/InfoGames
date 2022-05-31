@@ -3,6 +3,7 @@ package com.example.infogames.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -69,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             data.setIsLogin(true);
         }
         // TODO получение данных тем и тестов с сервера
-//        initialStart();
-//        user.setScore(100);
+        initialStart();
+//        user.setScore(10);
 
     }
 

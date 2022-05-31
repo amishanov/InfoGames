@@ -9,7 +9,7 @@
     <include
         layout="@layout/toolbar" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/box"
@@ -18,7 +18,6 @@
         android:layout_marginTop="71dp"
         android:layout_marginBottom= "15dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -27,16 +26,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textViewTheory"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/theoryList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="@string/theory"
-                android:textSize="20sp"/>
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
 
             <RatingBar
                 android:id="@+id/ratingBarTheory"
@@ -64,6 +60,6 @@
                 android:layout_marginEnd="5dp"
                 android:text="@string/finish_theory"/>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,12 +2,14 @@ package com.example.infogames.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,9 +17,14 @@ import android.widget.Toast;
 import com.example.infogames.Data;
 import com.example.infogames.JSONHelper;
 import com.example.infogames.R;
+import com.example.infogames.TheoryListAdapter;
 import com.example.infogames.model.Review;
 import com.example.infogames.model.Theme;
 import com.example.infogames.model.User;
+import com.squareup.picasso.Picasso;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class TheoryActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -43,7 +50,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ratingBar = (RatingBar) findViewById(R.id.ratingBarTheory);
-        textViewTheory = (TextView) findViewById(R.id.textViewTheory);
+//        textViewTheory = (TextView) findViewById(R.id.textViewTheory);
         textViewScore = (TextView) findViewById(R.id.textViewScore);
         buttonReview = (Button) findViewById(R.id.buttonReviewTheory);
         buttonReview.setOnClickListener(this);
@@ -58,7 +65,18 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         } else {
             finish();
         }
-
+        String theory = theme.getTheory();
+        List<String> subStr = Arrays.asList(theory.split("<ref>"));
+        TheoryListAdapter adapter = new TheoryListAdapter(this, subStr);
+        RecyclerView recyclerView = findViewById(R.id.theoryList);
+        recyclerView.setAdapter(adapter);
+//        ImageView imageViewTest = findViewById(R.id.imageViewTest);
+//        Picasso.get().load(subStr.get(3)).into(imageViewTest);
+//        textViewTheory.setText(Html.fromHtml(subStr.get(1), Html.FROM_HTML_MODE_COMPACT));
+        for (String s: subStr) {
+            System.out.println(s);
+        }
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -77,7 +95,8 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         else {
             buttonProfile.setImageResource(R.drawable.ic_profile);
         }
-        textViewTheory.setText(Html.fromHtml(theme.getTheory(), Html.FROM_HTML_MODE_COMPACT));
+
+//        textViewTheory.setText(Html.fromHtml(theme.getTheory(), Html.FROM_HTML_MODE_COMPACT));
     }
 
     @Override

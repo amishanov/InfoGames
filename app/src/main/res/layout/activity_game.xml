@@ -13,7 +13,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_timer"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/fragmentContainerView"
         app:layout_constraintEnd_toStartOf="@+id/textViewTimer" />
 
@@ -60,8 +60,8 @@
         android:layout_marginTop="72dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
-        android:text="00:32"
-        android:visibility="visible"
+        android:text="00:00"
+        android:visibility="invisible"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/fragmentContainerView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,40 +70,37 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
-        android:name="com.example.infogames.games.GameSchemeFragment"
         android:layout_width="match_parent"
         android:layout_height="524dp"
-
-        app:layout_constraintBottom_toTopOf="@+id/buttonFinishGame"
+        app:layout_constraintBottom_toTopOf="@+id/btnStartFinishGame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCode" />
 
     <Button
-        android:id="@+id/buttonFinishGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/btnStartFinishGame"
+        android:layout_width="208dp"
+        android:layout_height="48dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/finish_game"
-        android:visibility="visible"
+        android:text="Начать игру"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textViewPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="36dp"
-        android:text="4"
-        android:visibility="visible"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toStartOf="@+id/buttonFinishGame"
-        app:layout_constraintHorizontal_bias="0.866"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView" />
+        android:layout_marginBottom="10dp"
+        android:text="0"
+        android:textSize="40sp"
+
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentContainerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

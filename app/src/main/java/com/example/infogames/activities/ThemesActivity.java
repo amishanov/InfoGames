@@ -63,11 +63,6 @@ public class ThemesActivity extends AppCompatActivity {
 
         tests = JSONHelper.importTestsFromJSON(this);
         themes = JSONHelper.importThemesFromJSON(this);
-        if (data.isLogin())
-        {
-            ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
-            buttonProfile.setImageResource(R.drawable.ic_profile_login);
-        }
 
         expandableListView = findViewById(R.id.expListView);
         listGroup = new ArrayList<>();

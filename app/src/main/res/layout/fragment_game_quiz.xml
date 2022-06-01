@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textViewQuizQuestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -18,9 +18,10 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:background="@drawable/box"
-        android:text="Если переполнение разряда наступает при достижении числа 2, то система счисления является:"
+        android:text="ВИКТОРИНА"
+        android:gravity="center"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -29,6 +30,8 @@
         app:layout_constraintVertical_bias="0.161" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/quizContainer"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -38,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3">
+        app:layout_constraintTop_toBottomOf="@+id/textViewQuizQuestion">
 
         <Button
             android:id="@+id/buttonAnswer1"
@@ -46,7 +49,8 @@
             android:layout_height="80dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Троичной"
+            android:autoSizeTextType="uniform"
+            android:text="Ответ 1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,11 +58,11 @@
             android:id="@+id/buttonAnswer2"
             android:layout_width="160dp"
             android:layout_height="80dp"
-
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:text="Двоичной"
+            android:autoSizeTextType="uniform"
+            android:text="Ответ 2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/buttonAnswer1"
@@ -71,8 +75,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-
-            android:text="Единичной"
+            android:autoSizeTextType="uniform"
+            android:text="Ответ 3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonAnswer1"
@@ -82,12 +86,12 @@
             android:id="@+id/buttonAnswer4"
             android:layout_width="160dp"
             android:layout_height="80dp"
-
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:text="Ничто из перечисленного"
+            android:autoSizeTextType="uniform"
+            android:text="Ответ 4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"

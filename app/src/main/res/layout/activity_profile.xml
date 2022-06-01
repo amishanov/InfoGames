@@ -64,8 +64,8 @@
     <TextView
         android:layout_width="360dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Здесь распологается пользовательская информация: рекорды и результаты тестов\n\n\nКонтент в разработке"
+        android:layout_marginTop="0dp"
+        android:text="Лучшие результаты за тестирование:\nТест 1: 3/3\nТест 2: 5/10\nТест 3: 0/10\nТест 4: 0/10\nТест 5: 0/10\nТест 6: 0/10\n\nРекорды:\nЛогическая схема: 14 очков\nВикторина: 6 очков"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.313"

@@ -2,13 +2,17 @@ package com.example.infogames.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.infogames.Data;
 import com.example.infogames.R;
+import com.example.infogames.games.MainFragment;
 import com.example.infogames.model.User;
 
 public class GameActivity extends AppCompatActivity {
@@ -16,6 +20,7 @@ public class GameActivity extends AppCompatActivity {
     TextView textViewScore;
     Data data;
     User user;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +32,12 @@ public class GameActivity extends AppCompatActivity {
         textViewScore = (TextView) findViewById(R.id.textViewScore);
         data = Data.getInstance();
         user = data.getUser();
+
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        MainFragment mainFragment = new MainFragment();
+        ft.add(R.id.fragmentContainerView, mainFragment, "mainFragment");
+        ft.commit();
     }
 
     @Override
@@ -50,4 +61,5 @@ public class GameActivity extends AppCompatActivity {
         finish();
         return true;
     }
+
 }

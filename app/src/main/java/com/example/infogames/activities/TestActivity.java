@@ -111,7 +111,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         data = Data.getInstance();
         user = data.getUser();
         System.out.println("Initial user: " + user);
-        //TODO Штуки, которые могут понадобиться при возобновлении работы
         System.out.println(data.isLogin());
         textViewScore.setText(Integer.toString(user.getScore()));
         ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);

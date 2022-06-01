@@ -1,14 +1,20 @@
 package com.example.infogames.games;
 
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.infogames.R;
 
@@ -23,8 +29,18 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     ImageButton[] buttonsIn;
     ImageButton[] buttonsOut;
     Button buttonEnterCode;
+    TextView tvCode;
     int[] inState;
     int[] outState;
+    ImageView ivTimer, ivWrong1, ivWrong2, ivWrong3;
+    TextView tvPoints, tvTimer;
+    Button btnStartEnd;
+    long timeLeft = 60000;
+    boolean gameRunning = false;
+    int currentCode = 0, errors = 0, points = 0;
+    SoundPool soundPool;
+    int soundCorrect, soundWrong;
+    CountDownTimer countDownTimer;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -36,15 +52,6 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GameSchemeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static GameSchemeFragment newInstance(String param1, String param2) {
         GameSchemeFragment fragment = new GameSchemeFragment();
         Bundle args = new Bundle();
@@ -68,11 +75,29 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game_scheme, container, false);
 
+        // Инициализация элементов для игры
         inState = new int[]{0, 0};
         outState = new int[] {0, 0, 0, 0};
         buttonsIn = new ImageButton[] {view.findViewById(R.id.buttonIn1),view.findViewById(R.id.buttonIn2)};
         buttonsIn[0].setOnClickListener(this);
         buttonsIn[1].setOnClickListener(this);
+        buttonEnterCode = view.findViewById(R.id.buttonEnterCode);
+        buttonEnterCode.setOnClickListener(this);
+        tvCode = view.findViewById(R.id.textViewCode);
+
+        // Инициализация элементов для звуков
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .build();
+        soundPool =  new SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(audioAttributes)
+                .build();
+        soundCorrect = soundPool.load(getActivity(), R.raw.correct_answer, 1);
+        soundWrong = soundPool.load(getActivity(), R.raw.error_sound, 1);
+
+        initActivityElements();
 
 //        buttonIn1.setOnClickListener(this);
 //        buttonIn2 = view.findViewById(R.id.buttonIn2);
@@ -126,6 +151,30 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
                 inState[1] = 0;
                 setUpOut(transfer(inState));
             }
+        } else if (id == R.id.btnStartFinishGame) {
+            if (!gameRunning) {
+                startGame();
+                gameRunning = true;
+            } else {
+                // TODO завершение игры
+            }
+        } else if (id == R.id.buttonEnterCode) {
+            if (gameRunning) {
+                if (checkCode()) {
+                    soundPool.play(soundCorrect,1, 1, 1, 0, 1);
+                    updateGame();
+                    points++;
+                    tvPoints.setText(Integer.toString(points));
+                } else {
+                    soundPool.play(soundWrong,1, 1, 1, 0, 1);
+                    if (!updateErrors()) {
+                        updateGame();
+                    }
+                    else {
+                        btnStartEnd.performClick();
+                    }
+                }
+            }
         }
     }
 
@@ -143,5 +192,85 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
             buttonsOut[i].setImageResource(R.drawable.halfround_button_gray);
         }
         buttonsOut[out].setImageResource(R.drawable.halfround_button_green);
+    }
+
+    public void startGame() {
+        btnStartEnd.setText("Закончить игру");
+        countDownTimer = new CountDownTimer(timeLeft, 1000) {
+            @Override
+            public void onTick(long l) {
+                timeLeft = l;
+                updateTimer();
+            }
+
+            @Override
+            public void onFinish() {
+                btnStartEnd.performClick();
+            }
+        };
+        currentCode = (int) (Math.random() * 4);
+        tvCode.setText(Integer.toString(currentCode));
+        countDownTimer.start();
+    }
+
+    public void updateTimer() {
+        int minutes = (int) timeLeft / 60000;
+        int seconds = (int) timeLeft % 60000 / 1000;
+
+        String timeLeft = "";
+        if (minutes < 1)
+            timeLeft += "0";
+        timeLeft += minutes + ":";
+        if (seconds < 10)
+            timeLeft += "0";
+        timeLeft += seconds;
+        tvTimer.setText(timeLeft);
+    }
+
+    public void updateGame() {
+        currentCode = (int) (Math.random() * 4);
+        tvCode.setText(Integer.toString(currentCode));
+    }
+
+    public boolean updateErrors() {
+        errors++;
+        switch (errors) {
+            case (1):
+                ivWrong1.setVisibility(View.VISIBLE);
+                break;
+            case (2):
+                ivWrong2.setVisibility(View.VISIBLE);
+                break;
+            case (3):
+                ivWrong3.setVisibility(View.VISIBLE);
+        }
+        return errors != 3;
+    }
+
+    public boolean checkCode() {
+        if (transfer(inState) == currentCode)
+            return true;
+        return false;
+    }
+
+    public void initActivityElements() {
+        ivTimer = getActivity().findViewById(R.id.ivTimer);
+        ivWrong1 = getActivity().findViewById(R.id.ivWrong1);
+        ivWrong2 = getActivity().findViewById(R.id.ivWrong2);
+        ivWrong3 = getActivity().findViewById(R.id.ivWrong3);
+        tvPoints = getActivity().findViewById(R.id.textViewPoints);
+        tvTimer = getActivity().findViewById(R.id.textViewTimer);
+        ivTimer.setVisibility(View.VISIBLE);
+        tvPoints.setVisibility(View.VISIBLE);
+        tvTimer.setVisibility(View.VISIBLE);
+        btnStartEnd = getActivity().findViewById(R.id.btnStartFinishGame);
+        btnStartEnd.setVisibility(View.VISIBLE);
+        btnStartEnd.setOnClickListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        soundPool.release();
+        super.onDestroy();
     }
 }

@@ -52,7 +52,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         buttonScheme = view.findViewById(R.id.buttonSchemeGame);
+        buttonScheme.setOnClickListener(this);
         buttonQuiz = view.findViewById(R.id.buttonQuizGame);
+        buttonQuiz.setOnClickListener(this);
         return view;
 
     }
@@ -61,9 +63,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonSchemeGame) {
-            // TODO
+            GameSchemeFragment gameSchemeFragment = new GameSchemeFragment();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainerView, gameSchemeFragment, "gameSchemeFragment" ).commit();
         } else if (id == R.id.buttonQuizGame) {
-            //TODO
+            GameQuizFragment gameQuizFragment = new GameQuizFragment();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainerView, gameQuizFragment, "gameQuizFragment" ).commit();
         }
     }
 }

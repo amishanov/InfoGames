@@ -1,9 +1,11 @@
 package com.example.infogames.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +37,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private User user;
     private int testId;
     private Test test;
+    private int itemChecked;
+
     // Проверка запущен ли тест для изменения элементов интерфейса
     private boolean isTestFinished;
     // Массив ответов
@@ -47,7 +51,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     Toolbar toolbar;
     TextView textViewScore;
     RatingBar ratingBar;
-    Button buttonNext, buttonPrev, buttonReview, buttonControl;
+    Button buttonNext, buttonPrev, buttonReview, buttonControl, btnSendError;
     RadioButton rb1, rb2, rb3, rb4;
     RadioGroup rg;
     EditText editTextAnswer;
@@ -133,6 +137,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         buttonPrev.setOnClickListener(this);
         buttonReview = (Button) findViewById(R.id.buttonReview);
         buttonReview.setOnClickListener(this);
+        btnSendError = findViewById(R.id.buttonSendErrorTest);
+        btnSendError.setOnClickListener(this);
         editTextAnswer = (EditText) findViewById(R.id.editTextAnswer);
         textViewQuestion1 = (TextView) findViewById(R.id.textViewQuestion1);
         textViewQuestion2 = (TextView) findViewById(R.id.textViewQuestion2);
@@ -178,7 +184,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 editTextAnswer.setVisibility(View.INVISIBLE);
                 editTextAnswer.setClickable(false);
                 int result = check();
-
+                btnSendError.setVisibility(View.INVISIBLE);
                 String strResult = "Результат твоего тестирования: " + result;
                 Integer prevBest = user.getTestsBests()[testId];
                 if (prevBest == null) {
@@ -212,8 +218,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 textViewQuestion1.setText(strResult);
 
-
-                // TODO Фиксация результатов
 
                 buttonNext.setVisibility(View.INVISIBLE);
                 buttonNext.setClickable(false);
@@ -275,7 +279,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 buttonControl.setClickable(true);
                 buttonReview.setVisibility(View.INVISIBLE);
                 buttonReview.setClickable(false);
-
                 buttonNext.setVisibility(View.VISIBLE);
                 buttonNext.setClickable(true);
                 buttonPrev.setVisibility(View.VISIBLE);
@@ -285,8 +288,30 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 showQuestion(questionList.get(currentQuestion));
                 editTextAnswer.setVisibility(View.VISIBLE);
                 editTextAnswer.setClickable(true);
+                btnSendError.setVisibility(View.VISIBLE);
             }
-
+        } else if (id == R.id.buttonSendErrorTest) {
+            AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
+            itemChecked = 0;
+            String [] errors = new String[]{"Ошибка в вопросе", "Ошибка в ответе", "Что-то ещё"};
+            aBuilder.setSingleChoiceItems(errors,
+                    0, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            TestActivity.this.setItemChecked(i);
+                        }
+                    })
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int btId) {
+                            Toast.makeText(TestActivity.this, Integer.toString(TestActivity.this.getItemChecked()), Toast.LENGTH_SHORT).show();
+                            // TODO send error report + questNum
+                        }
+                    })
+                    .setNegativeButton("Отмена", null);
+            AlertDialog alert = aBuilder.create();
+            alert.setTitle("Выбери тип ошибки");
+            alert.show();
         }
     }
 
@@ -391,5 +416,13 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    public int getItemChecked() {
+        return itemChecked;
+    }
+
+    public void setItemChecked(int itemChecked) {
+        this.itemChecked = itemChecked;
     }
 }

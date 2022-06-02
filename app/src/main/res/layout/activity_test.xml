@@ -136,11 +136,11 @@
 
     <Button
         android:id="@+id/buttonPrev"
-        android:layout_width="63dp"
+        android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginStart="15dp"
         android:layout_marginBottom="25dp"
-        android:text="P"
+        android:text="&lt;-"
         android:textSize="30sp"
         android:visibility="invisible"
         android:clickable="false"
@@ -149,11 +149,11 @@
 
     <Button
         android:id="@+id/buttonNext"
-        android:layout_width="63dp"
+        android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginStart="5dp"
         android:layout_marginBottom="25dp"
-        android:text="N"
+        android:text="-&gt;"
         android:textSize="30sp"
         android:visibility="invisible"
         android:clickable="false"
@@ -198,6 +198,17 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonReview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonSendErrorTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="Сообщить об ошибке"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/buttonControl"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

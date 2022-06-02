@@ -1,10 +1,10 @@
 package com.example.infogames.games;
 
 import android.media.AudioAttributes;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
@@ -26,14 +26,15 @@ import com.example.infogames.R;
 public class GameSchemeFragment extends Fragment implements View.OnClickListener {
 
     ImageButton buttonIn1, buttonIn2, buttonOut0, buttonOut1, buttonOut2, buttonOut3;
-    ImageButton[] buttonsIn;
-    ImageButton[] buttonsOut;
+    Group groupDc;
+    ImageButton[] buttonsInDc;
+    ImageButton[] buttonsOutDc;
     Button buttonEnterCode;
     TextView tvCode;
-    int[] inState;
-    int[] outState;
+    int[] inStateDc;
+    int[] outStateDc;
     ImageView ivTimer, ivWrong1, ivWrong2, ivWrong3;
-    TextView tvPoints, tvTimer;
+    TextView tvPoints, tvTimer, tvScheme;
     Button btnStartEnd;
     long timeLeft = 60000;
     boolean gameRunning = false;
@@ -42,21 +43,15 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     int soundCorrect, soundWrong;
     CountDownTimer countDownTimer;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    private String mParam1;
-    private String mParam2;
 
     public GameSchemeFragment() {
         // Required empty public constructor
     }
 
-    public static GameSchemeFragment newInstance(String param1, String param2) {
+    public static GameSchemeFragment newInstance() {
         GameSchemeFragment fragment = new GameSchemeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,8 +60,6 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -76,15 +69,16 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.fragment_game_scheme, container, false);
 
         // Инициализация элементов для игры
-        inState = new int[]{0, 0};
-        outState = new int[] {0, 0, 0, 0};
-        buttonsIn = new ImageButton[] {view.findViewById(R.id.buttonIn1),view.findViewById(R.id.buttonIn2)};
-        buttonsIn[0].setOnClickListener(this);
-        buttonsIn[1].setOnClickListener(this);
+        inStateDc = new int[]{0, 0};
+        outStateDc = new int[] {0, 0, 0, 0};
+        buttonsInDc = new ImageButton[] {view.findViewById(R.id.buttonIn1),view.findViewById(R.id.buttonIn2)};
+        buttonsInDc[0].setOnClickListener(this);
+        buttonsInDc[1].setOnClickListener(this);
+        tvScheme = view.findViewById(R.id.textViewScheme);
         buttonEnterCode = view.findViewById(R.id.buttonEnterCode);
         buttonEnterCode.setOnClickListener(this);
         tvCode = view.findViewById(R.id.textViewCode);
-
+        groupDc = view.findViewById(R.id.dcGroup);
         // Инициализация элементов для звуков
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -114,9 +108,9 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
 //        buttonOut3 = view.findViewById(R.id.buttonOut3);
 //        buttonOut3.setOnClickListener(this);
 
-        buttonsOut = new ImageButton[] {view.findViewById(R.id.buttonOut0),view.findViewById(R.id.buttonOut1),
+        buttonsOutDc = new ImageButton[] {view.findViewById(R.id.buttonOut0),view.findViewById(R.id.buttonOut1),
                 view.findViewById(R.id.buttonOut2), view.findViewById(R.id.buttonOut3)};
-        for (ImageButton btn: buttonsOut) {
+        for (ImageButton btn: buttonsOutDc) {
             btn.setOnClickListener(this);
         }
 
@@ -129,34 +123,40 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
         int id = view.getId();
         if (id == R.id.buttonIn1) {
             //TODO
-            System.out.println(inState[0]);
-            if (inState[0] == 0) {
-                buttonsIn[0].setImageResource(R.drawable.round_button_green);
+            System.out.println(inStateDc[0]);
+            if (inStateDc[0] == 0) {
+                buttonsInDc[0].setImageResource(R.drawable.round_button_green);
 //            buttonsOut[1].setImageResource(R.drawable.halfround_button_green);
-                inState[0] = 1;
-                setUpOut(transfer(inState));
+                inStateDc[0] = 1;
+                setUpOut(transfer(inStateDc));
             } else {
-                buttonsIn[0].setImageResource(R.drawable.round_button_gray);
-                inState[0] = 0;
-                setUpOut(transfer(inState));
+                buttonsInDc[0].setImageResource(R.drawable.round_button_gray);
+                inStateDc[0] = 0;
+                setUpOut(transfer(inStateDc));
             }
 
         } else if (id == R.id.buttonIn2) {
-            if (inState[1] == 0) {
-                buttonsIn[1].setImageResource(R.drawable.round_button_green);
-                inState[1] = 1;
-                setUpOut(transfer(inState));
+            if (inStateDc[1] == 0) {
+                buttonsInDc[1].setImageResource(R.drawable.round_button_green);
+                inStateDc[1] = 1;
+                setUpOut(transfer(inStateDc));
             } else  {
-                buttonsIn[1].setImageResource(R.drawable.round_button_gray);
-                inState[1] = 0;
-                setUpOut(transfer(inState));
+                buttonsInDc[1].setImageResource(R.drawable.round_button_gray);
+                inStateDc[1] = 0;
+                setUpOut(transfer(inStateDc));
             }
         } else if (id == R.id.btnStartFinishGame) {
             if (!gameRunning) {
+                tvScheme.setVisibility(View.INVISIBLE);
+                groupDc.setVisibility(View.VISIBLE);
+                groupDc.setClickable(true);
                 startGame();
                 gameRunning = true;
             } else {
-                // TODO завершение игры
+                groupDc.setVisibility(View.INVISIBLE);
+                groupDc.setClickable(false);
+                tvScheme.setVisibility(View.VISIBLE);
+                // TODO вывод результата игры на экран и синхронизация
             }
         } else if (id == R.id.buttonEnterCode) {
             if (gameRunning) {
@@ -164,10 +164,10 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
                     soundPool.play(soundCorrect,1, 1, 1, 0, 1);
                     updateGame();
                     points++;
-                    tvPoints.setText(Integer.toString(points));
+                    tvPoints.setText("Счёт: " + Integer.toString(points));
                 } else {
                     soundPool.play(soundWrong,1, 1, 1, 0, 1);
-                    if (!updateErrors()) {
+                    if (updateErrors()) {
                         updateGame();
                     }
                     else {
@@ -188,10 +188,10 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     }
 
     public void setUpOut(int out) {
-        for (int i = 0; i < buttonsOut.length; i++) {
-            buttonsOut[i].setImageResource(R.drawable.halfround_button_gray);
+        for (int i = 0; i < buttonsOutDc.length; i++) {
+            buttonsOutDc[i].setImageResource(R.drawable.halfround_button_gray);
         }
-        buttonsOut[out].setImageResource(R.drawable.halfround_button_green);
+        buttonsOutDc[out].setImageResource(R.drawable.halfround_button_green);
     }
 
     public void startGame() {
@@ -248,7 +248,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     }
 
     public boolean checkCode() {
-        if (transfer(inState) == currentCode)
+        if (transfer(inStateDc) == currentCode)
             return true;
         return false;
     }

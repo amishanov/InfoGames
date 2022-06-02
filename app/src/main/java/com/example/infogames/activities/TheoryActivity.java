@@ -1,15 +1,15 @@
 package com.example.infogames.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,8 +21,8 @@ import com.example.infogames.TheoryListAdapter;
 import com.example.infogames.model.Review;
 import com.example.infogames.model.Theme;
 import com.example.infogames.model.User;
-import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,8 +37,9 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
     int theoryId;
     Theme theme;
     TextView textViewTheory;
+    int itemChecked = 0;
     TextView textViewScore;
-    Button buttonReview, buttonFinishTests;
+    Button buttonReview, buttonFinishTests, btnSendErrorReport;
 
 
     @Override
@@ -56,6 +57,8 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         buttonReview.setOnClickListener(this);
         buttonFinishTests = (Button) findViewById(R.id.buttonFinishTheory);
         buttonFinishTests.setOnClickListener(this);
+        btnSendErrorReport = findViewById(R.id.buttonSendErrorTheory);
+        btnSendErrorReport.setOnClickListener(this);
 
         // TODO Доставать тему и отображать её, ID нужен для работы со списком в User
         Bundle arguments = getIntent().getExtras();
@@ -136,7 +139,42 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
                         "Отзывы могут оставлять только зарегистрированные пользователи!",
                         Toast.LENGTH_LONG).show();
             }
+        } else if (id == R.id.buttonSendErrorTheory) {
+            AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
+            itemChecked = 0;
+            String [] errors = new String[]{"Опечака", "Неправильное отображение", "Что-то ещё"};
+            aBuilder.setSingleChoiceItems(errors,
+                            0, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    TheoryActivity.this.setItemChecked(i);
+                                }
+                            })
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int btId) {
+                            Toast.makeText(TheoryActivity.this, Integer.toString(TheoryActivity.this.getItemChecked()), Toast.LENGTH_SHORT).show();
+                            // TODO send error report
+                        }
+                    })
+                    .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int btId) {
+                        }
+                    });
+            AlertDialog alert = aBuilder.create();
+            alert.setTitle("Выбери тип ошибки");
+            alert.show();
+
         }
+    }
+
+    public void setItemChecked(int itemChecked) {
+        this.itemChecked = itemChecked;
+    }
+
+    public int getItemChecked() {
+        return itemChecked;
     }
 
     @Override

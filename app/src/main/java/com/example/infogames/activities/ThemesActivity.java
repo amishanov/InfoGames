@@ -137,7 +137,6 @@ public class ThemesActivity extends AppCompatActivity {
         super.onStart();
         data = Data.getInstance();
         user = data.getUser();
-        //TODO Штуки, которые могут понадобиться при возобновлении работы
         textViewScore.setText(Integer.toString(user.getScore()));
         ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
         if (data.isLogin())
@@ -165,16 +164,9 @@ public class ThemesActivity extends AppCompatActivity {
     }
 
     private void initListData() {
-        // listGroup = expList
         for (Theme theme: themes) {
             listGroup.add(theme.getThemeName());
         }
-//        listGroup.add(expList[0]);
-//        listGroup.add(expList[1]);
-//        listGroup.add(expList[2]);
-//        listGroup.add(expList[3]);
-//        listGroup.add(expList[4]);
-//        listGroup.add(expList[5]);
 
 
         // TODO сделать, чтобы добовлялись
@@ -190,12 +182,6 @@ public class ThemesActivity extends AppCompatActivity {
                 listItem.put(listGroup.get(i), Arrays.asList("Теория", "Тестирование"));
             }
         }
-//        listItem.put(expList[0], Arrays.asList(new String[]{"", ""}));
-//        listItem.put(expList[1], list1);
-//        listItem.put(expList[2], list1);
-//        listItem.put(expList[3], list1);
-//        listItem.put(expList[4], list1);
-//        listItem.put(expList[5], list1);
         adapter.notifyDataSetChanged();
     }
 

@@ -217,7 +217,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
             soundPool.play(soundCorrect, 1, 1, 1, 0, 1);
             updateQuestion();
             points++;
-            tvPoints.setText(Integer.toString(points));
+            tvPoints.setText("Счёт: " + Integer.toString(points));
         } else {
             soundPool.play(soundWrong, 1, 1, 1, 0, 1);
             if (updateErrors())

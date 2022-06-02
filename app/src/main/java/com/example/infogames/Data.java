@@ -1,7 +1,5 @@
 package com.example.infogames;
 
-import android.content.Context;
-
 import com.example.infogames.model.Review;
 import com.example.infogames.model.User;
 import com.example.infogames.model.UserData;
@@ -87,10 +85,10 @@ public class Data {
     public String sendReview(Review review) {
         // TODO переделать под синхронный поток (Пользователь должен знать, что подключение не работает)
         ReviewService reviewService = retrofitService.getRetrofit().create(ReviewService.class);
-        user.setToken("login60.2659194162054871");
-        reviewService.createReview(user.getToken(), review).enqueue(new Callback<Boolean>() {
+//        user.setToken("login60.2659194162054871");
+        reviewService.createReview(user.getToken(), review).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.code() == 201)
                     System.out.println("SendReview: PASS");
                 else
@@ -98,7 +96,7 @@ public class Data {
             }
 
             @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 System.out.println("sendUserData: Failed, " + t);
             }
 

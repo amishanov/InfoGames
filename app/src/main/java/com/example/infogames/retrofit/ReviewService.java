@@ -11,5 +11,5 @@ import retrofit2.http.POST;
 
 public interface ReviewService {
     @POST("v1/reviews")
-    Call<Boolean> createReview(@Header("Authorization") String token, @Body Review review);
+    Call<Void> createReview(@Header("Authorization") String token, @Body Review review);
 }

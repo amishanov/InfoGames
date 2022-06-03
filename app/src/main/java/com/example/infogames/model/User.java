@@ -19,7 +19,7 @@ public class User {
         progress = new Boolean[]{false, false, false, false, false, false};
         access = new Boolean[]{true, false, false, false, false, false};
         testsBests = new Integer[]{0, 0, 0, 0, 0, 0};
-        gamesBests = new Integer[]{0};
+        gamesBests = new Integer[]{0, 0};
     }
 
     public User(String id, String email, String login, String password,

@@ -14,11 +14,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.infogames.Data;
 import com.example.infogames.JSONHelper;
 import com.example.infogames.R;
+import com.example.infogames.activities.GameActivity;
 import com.example.infogames.model.Question;
 import com.example.infogames.model.Test;
+import com.example.infogames.model.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +36,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     TextView tvQuestion;
     ConstraintLayout clQuizContainer;
     ImageView ivTimer, ivWrong1, ivWrong2, ivWrong3;
-    TextView tvPoints, tvTimer;
+    TextView tvPoints, tvTimer, tvScore;
     Button btnStartEnd;
     long timeLeft = 30000;
     boolean gameRunning = false;
@@ -44,6 +48,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     Question currentQuestion;
     int currentQuestionNum = -1;
     List<Test> tests;
+    GameActivity gameActivity;
 
     public GameQuizFragment() {
     }
@@ -66,6 +71,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game_quiz, container, false);
 
+        gameActivity = (GameActivity) getActivity();
         clQuizContainer = view.findViewById(R.id.quizContainer);
         btnAnswer1 = view.findViewById(R.id.buttonAnswer1);
         btnAnswer1.setOnClickListener(this);
@@ -99,6 +105,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
         ivWrong3 = getActivity().findViewById(R.id.ivWrong3);
         tvPoints = getActivity().findViewById(R.id.textViewPoints);
         tvTimer = getActivity().findViewById(R.id.textViewTimer);
+        tvScore = getActivity().findViewById(R.id.textViewScore);
         ivTimer.setVisibility(View.VISIBLE);
         tvPoints.setVisibility(View.VISIBLE);
         tvTimer.setVisibility(View.VISIBLE);
@@ -143,8 +150,37 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
                 countDownTimer.start();
 
             } else {
-                // TODO завершение игры
+                countDownTimer.cancel();
+                btnStartEnd.setVisibility(View.INVISIBLE);
                 clQuizContainer.setVisibility(View.INVISIBLE);
+                String res = "";
+                User user = gameActivity.getUser();
+                Data data = gameActivity.getData();
+                Integer [] gamesBests = new Integer[]{0,0};
+                if (user.getGamesBests().length < 2)
+                    gamesBests[0] = user.getGamesBests()[0];
+                else
+                    gamesBests = user.getGamesBests();
+
+                if (points > gamesBests[1]) {
+                    //TODO добавить музыку
+                    res = "Вау! Это же новый рекорд. Поздравляю!";
+                    int sc = user.getScore();
+                    sc = sc - gamesBests[1] + points;
+                    gamesBests[1] = points;
+                    user.setGamesBests(gamesBests);
+                    user.setScore(sc);
+                    JSONHelper.exportUserToJSON(getActivity(), user);
+                    if (data.isLogin()){
+                        data.sendUserData();
+                    }
+                } else {
+                    res = "Твой лучший результат: " + gamesBests[1];
+                }
+                res += "\nТы набрал: " + points;
+                tvQuestion.setText(res);
+                tvQuestion.setVisibility(View.VISIBLE);
+
             }
         }
 

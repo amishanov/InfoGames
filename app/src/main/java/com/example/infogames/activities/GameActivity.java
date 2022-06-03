@@ -62,4 +62,11 @@ public class GameActivity extends AppCompatActivity {
         return true;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public Data getData() {
+        return data;
+    }
 }

@@ -15,8 +15,13 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.infogames.Data;
+import com.example.infogames.JSONHelper;
 import com.example.infogames.R;
+import com.example.infogames.activities.GameActivity;
+import com.example.infogames.model.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +39,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     int[] inStateDc;
     int[] outStateDc;
     ImageView ivTimer, ivWrong1, ivWrong2, ivWrong3;
-    TextView tvPoints, tvTimer, tvScheme;
+    TextView tvPoints, tvTimer, tvScheme, tvScore;
     Button btnStartEnd;
     long timeLeft = 60000;
     boolean gameRunning = false;
@@ -42,12 +47,9 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     SoundPool soundPool;
     int soundCorrect, soundWrong;
     CountDownTimer countDownTimer;
+    GameActivity gameActivity;
 
-
-
-    public GameSchemeFragment() {
-        // Required empty public constructor
-    }
+    public GameSchemeFragment() {}
 
     public static GameSchemeFragment newInstance() {
         GameSchemeFragment fragment = new GameSchemeFragment();
@@ -67,7 +69,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game_scheme, container, false);
-
+        gameActivity = (GameActivity) getActivity();
         // Инициализация элементов для игры
         inStateDc = new int[]{0, 0};
         outStateDc = new int[] {0, 0, 0, 0};
@@ -155,8 +157,35 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
             } else {
                 groupDc.setVisibility(View.INVISIBLE);
                 groupDc.setClickable(false);
+                buttonEnterCode.setVisibility(View.INVISIBLE);
+                tvCode.setVisibility(View.INVISIBLE);
+                countDownTimer.cancel();
+                String res = "";
+                User user = gameActivity.getUser();
+                Data data = gameActivity.getData();
+                Integer [] gamesBests = user.getGamesBests();
+                if (points > gamesBests[0]) {
+                    //TODO добавить музыку
+                    res = "Вау! Это же новый рекорд. Поздравляю!";
+                    int sc = user.getScore();
+                    sc = sc - gamesBests[0] + points;
+                    gamesBests[0] = points;
+                    user.setGamesBests(gamesBests);
+                    user.setScore(sc);
+                    JSONHelper.exportUserToJSON(getActivity(), user);
+
+                    if (data.isLogin()){
+                        data.sendUserData();
+                    }
+                } else {
+                    res = "Твой лучший результат: " + gamesBests[0];
+                }
+                res += "\nТы набрал: " + points;
+                tvScheme.setText(res);
                 tvScheme.setVisibility(View.VISIBLE);
-                // TODO вывод результата игры на экран и синхронизация
+                btnStartEnd.setVisibility(View.INVISIBLE);
+                //TODO обновление user и файла
+                //TODO проверка isLogin -> отправка данных на сервер
             }
         } else if (id == R.id.buttonEnterCode) {
             if (gameRunning) {
@@ -260,6 +289,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
         ivWrong3 = getActivity().findViewById(R.id.ivWrong3);
         tvPoints = getActivity().findViewById(R.id.textViewPoints);
         tvTimer = getActivity().findViewById(R.id.textViewTimer);
+        tvScore = getActivity().findViewById(R.id.textViewScore);
         ivTimer.setVisibility(View.VISIBLE);
         tvPoints.setVisibility(View.VISIBLE);
         tvTimer.setVisibility(View.VISIBLE);

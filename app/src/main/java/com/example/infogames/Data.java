@@ -105,5 +105,8 @@ public class Data {
         return "";
     }
 
+    public void sendErrorReport() {
+        // TODO (параметр не забудь добавить)
+    }
 
 }

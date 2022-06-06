@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.infogames.Data;
@@ -31,7 +32,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private Toolbar toolbar;
     private Data data;
-
+    private TextView tvResults;
     private Button buttonLogin, buttonSignOut, buttonReg, buttonSignUp, buttonSignIn;
     private EditText etRegLogin, etRegEmail, etRegPassword, etRegRePassword, etLogin, etPassword;
 
@@ -112,6 +113,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                     public void onClick(DialogInterface dialogInterface, int btId) {
                                         data.getUser().clone(user);
                                         JSONHelper.exportUserToJSON(ProfileActivity.this, data.getUser());
+                                        String results = "Лучшие результаты за тестирования:\nТест 1: 0/3\nТест 2: 5/10\nТест 3: 0/10\nТест 4: 0/10\nТест 5: 0/10\nТест 6: 0/10\n\nРекорды:\n";
+                                        User user = data.getUser();
+                                        Integer[] gamesBests = user.getGamesBests();
+                                        if (gamesBests.length > 1)
+                                            results += "Логическая схема: " +  gamesBests[0] + " очков\n" + "Викторина: " + gamesBests[1]+ " очков";
+                                        tvResults.setText(results);
                                     }
                                 });
                         AlertDialog alert = aBuilder.create();
@@ -179,9 +186,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
         User user = new User(email, loginReg, hexPasswordReg.toString(), null, currentUser.getScore(), currentUser.getProgress(),
                 currentUser.getAccess(), currentUser.getTestsBests(), currentUser.getTestsBests());
-        userService.createUser(user).enqueue(new Callback<String>() {
+        userService.createUser(user).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.code() == 201) {
                     Toast.makeText(ProfileActivity.this,
                             "Ты успешно зарегистрирован!",
@@ -205,7 +212,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(ProfileActivity.this,
                         "Ой-ой, не могу подключиться к серверу", Toast.LENGTH_LONG).show();
                 Logger.getLogger(ProfileActivity.class.getName()).log(Level.SEVERE, "", t);
@@ -238,6 +245,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void initElementsProf() {
         buttonSignOut = (Button) findViewById(R.id.buttonSignOut);
         buttonSignOut.setOnClickListener(this);
+        tvResults = findViewById(R.id.tvResults);
+        String results = "Лучшие результаты за тестирования:\nТест 1: 0/3\nТест 2: 5/10\nТест 3: 0/10\nТест 4: 0/10\nТест 5: 0/10\nТест 6: 0/10\n\nРекорды:\n";
+        User user = data.getUser();
+        Integer[] gamesBests = user.getGamesBests();
+        if (gamesBests.length > 1)
+            results += "Логическая схема: " +  gamesBests[0] + " очков\n" + "Викторина: " + gamesBests[1]+ " очков";
+        tvResults.setText(results);
     }
 
     private void initToolbar() {

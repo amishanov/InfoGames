@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.infogames.Data;
 import com.example.infogames.JSONHelper;
+import com.example.infogames.QuestionGenerator;
 import com.example.infogames.R;
 import com.example.infogames.activities.GameActivity;
 import com.example.infogames.model.Question;
@@ -42,7 +43,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     boolean gameRunning = false;
     int errors = 0, points = 0;
     SoundPool soundPool;
-    int soundCorrect, soundWrong;
+    int soundCorrect, soundWrong, soundRecord;
     CountDownTimer countDownTimer;
     List<Question> questionList;
     Question currentQuestion;
@@ -92,6 +93,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
                 .build();
         soundCorrect = soundPool.load(getActivity(), R.raw.correct_answer, 1);
         soundWrong = soundPool.load(getActivity(), R.raw.error_sound, 1);
+        soundRecord = soundPool.load(getActivity(), R.raw.new_record, 1);
 
         initActivityElements();
         setUpQuestionList();
@@ -164,12 +166,17 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
 
                 if (points > gamesBests[1]) {
                     //TODO добавить музыку
+                    soundPool.play(soundRecord, 1, 1, 1, 0, 1);
                     res = "Вау! Это же новый рекорд. Поздравляю!";
                     int sc = user.getScore();
                     sc = sc - gamesBests[1] + points;
                     gamesBests[1] = points;
                     user.setGamesBests(gamesBests);
                     user.setScore(sc);
+                    tvScore.setText(user.getScore()+"");
+                    Toast.makeText(getActivity(),
+                            "Очки зачислены",
+                            Toast.LENGTH_LONG).show();
                     JSONHelper.exportUserToJSON(getActivity(), user);
                     if (data.isLogin()){
                         data.sendUserData();
@@ -187,22 +194,32 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     }
 
     public void updateQuestion() {
-        currentQuestionNum++;
-        if (currentQuestionNum >= questionList.size()) {
-            //TODO принудительное окончание
-            btnStartEnd.performClick();
-            return;
+        int choice = (int) (Math.random() * 4);
+        if (currentQuestionNum >= questionList.size() || choice > 0) {
+            if (choice == 1)
+                currentQuestion = QuestionGenerator.generateHexToDecimal();
+            else if (choice == 2)
+                currentQuestion = QuestionGenerator.generateDecimalToBinary();
+            else if (choice == 3)
+                currentQuestion = QuestionGenerator.generateDecimalToHex();
+            else
+                currentQuestion = QuestionGenerator.generateBinaryToDecimal();
+            setUpQuestion();
+        } else {
+            currentQuestionNum++;
+            currentQuestion = questionList.get(currentQuestionNum);
+            setUpQuestion();
         }
-        currentQuestion = questionList.get(currentQuestionNum);
+    }
+
+    public void setUpQuestion() {
         tvQuestion.setText(currentQuestion.getQuestion());
         String[] answers = currentQuestion.getAnswers();
         btnAnswer1.setText(answers[0]);
         btnAnswer2.setText(answers[1]);
         btnAnswer3.setText(answers[2]);
         btnAnswer4.setText(answers[3]);
-
     }
-
 
     public boolean checkQuestion(int answer) {
         return currentQuestion.getRightAnswer() == answer;

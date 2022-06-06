@@ -6,6 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.DialogInterface;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -57,6 +59,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     EditText editTextAnswer;
     ConstraintLayout layoutInput, layoutChoose;
     TextView textViewQuestion1, textViewQuestion2, questionCounter;
+    SoundPool soundPool;
+    int soundAchievement;
 
 
     @Override
@@ -82,6 +86,15 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         System.out.println(user);
         textViewScore = (TextView) findViewById(R.id.textViewScore);
 
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .build();
+        soundPool =  new SoundPool.Builder()
+                .setMaxStreams(2)
+                .setAudioAttributes(audioAttributes)
+                .build();
+        soundAchievement = soundPool.load(this, R.raw.achivment_bell, 1);
         if (data.isLogin())
         {
             ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
@@ -178,64 +191,17 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
             else {
-                //TODO Подтверждение завершения
-                answers.set(currentQuestion, getAnswer());
-                setUpLayout(true);
-                editTextAnswer.setVisibility(View.INVISIBLE);
-                editTextAnswer.setClickable(false);
-                int result = check();
-                btnSendError.setVisibility(View.INVISIBLE);
-                String strResult = "Результат твоего тестирования: " + result;
-                Integer prevBest = user.getTestsBests()[testId];
-                if (prevBest == null) {
-                    strResult += "\nТы поставил новый рекорд, так держать!";
-                    user.setScore(user.getScore()+result*2);
-                    textViewScore.setText(Integer.toString(user.getScore()));
-                    Toast.makeText(this, "Очки зачислены", Toast.LENGTH_LONG).show();
-                    user.getTestsBests()[testId] = result;
-                    JSONHelper.exportUserToJSON(this, user);
-                    if (data.isLogin()) {
-                        data.sendUserData();
-                    }
-                } else if (prevBest > result) {
-                    strResult += "\nВ прошлый раз ты справился лучше... Повтори материал и поробуй ещё раз!";
-                } else if (prevBest == result && result == testSize) {
-                    strResult += "\nТы снова выбил  максимум... Так держать!";
-                }
-                else if (prevBest == result) {
-                    strResult += "\nНеплохо, но ты не побил рекорд... Повтори материал и поробуй ещё раз!";
-                }
-                else {
-                    strResult += "\nТы поставил новый рекорд, так держать!";
-                    user.setScore(user.getScore()+result*2 - prevBest*2);
-                    textViewScore.setText(Integer.toString(user.getScore()));
-                    user.getTestsBests()[testId] = result;
-                    Toast.makeText(this, "Очки зачислены", Toast.LENGTH_LONG).show();
-                    JSONHelper.exportUserToJSON(this, user);
-                    if (data.isLogin()) {
-                        data.sendUserData();
-                    }
-                }
-                textViewQuestion1.setText(strResult);
-
-
-                buttonNext.setVisibility(View.INVISIBLE);
-                buttonNext.setClickable(false);
-                buttonPrev.setVisibility(View.INVISIBLE);
-                buttonPrev.setClickable(false);
-                questionCounter.setVisibility(View.INVISIBLE);
-
-                buttonReview.setText("Оцените материал");
-                buttonReview.setVisibility(View.VISIBLE);
-                buttonReview.setClickable(true);
-
-                ratingBar = (RatingBar) findViewById(R.id.ratingBarTest);
-                ratingBar.setStepSize(1);
-                ratingBar.setVisibility(View.VISIBLE);
-                ratingBar.setClickable(true);
-
-                buttonControl.setText("Вернуться к темам");
-                isTestFinished = true;
+                AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
+                aBuilder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int btId) {
+                                TestActivity.this.finishTest();
+                            }
+                        })
+                        .setNegativeButton("Отмена", null);
+                AlertDialog alert = aBuilder.create();
+                alert.setTitle("Ты уверен, что хочешь завершить тестирование?");
+                alert.show();
             }
         } else if (id == R.id.buttonNext) {
             answers.set(currentQuestion, getAnswer());
@@ -304,7 +270,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int btId) {
-                            Toast.makeText(TestActivity.this, Integer.toString(TestActivity.this.getItemChecked()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TestActivity.this, "Спасибо! Мы обязательно исправим ошибку", Toast.LENGTH_SHORT).show();
                             // TODO send error report + questNum
                         }
                     })
@@ -313,6 +279,68 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             alert.setTitle("Выбери тип ошибки");
             alert.show();
         }
+    }
+
+    private void finishTest() {
+        answers.set(currentQuestion, getAnswer());
+        setUpLayout(true);
+        editTextAnswer.setVisibility(View.INVISIBLE);
+        editTextAnswer.setClickable(false);
+        int result = check();
+        btnSendError.setVisibility(View.INVISIBLE);
+        String strResult = "Результат твоего тестирования: " + result;
+        Integer prevBest = user.getTestsBests()[testId];
+        if (prevBest == null) {
+            soundPool.play(soundAchievement, 1, 1, 1, 0, 1);
+            strResult += "\nТы поставил новый рекорд, так держать!";
+            user.setScore(user.getScore()+result*2);
+            textViewScore.setText(Integer.toString(user.getScore()));
+            Toast.makeText(this, "Очки зачислены", Toast.LENGTH_LONG).show();
+            user.getTestsBests()[testId] = result;
+            JSONHelper.exportUserToJSON(this, user);
+            if (data.isLogin()) {
+                data.sendUserData();
+            }
+        } else if (prevBest > result) {
+            strResult += "\nВ прошлый раз ты справился лучше... Повтори материал и поробуй ещё раз!";
+        } else if (prevBest == result && result == testSize) {
+            strResult += "\nТы снова выбил  максимум... Так держать!";
+        }
+        else if (prevBest == result) {
+            strResult += "\nНеплохо, но ты не побил рекорд... Повтори материал и поробуй ещё раз!";
+        }
+        else {
+            soundPool.play(soundAchievement, 1, 1, 1, 0, 1);
+            strResult += "\nТы поставил новый рекорд, так держать!";
+            user.setScore(user.getScore()+result*2 - prevBest*2);
+            textViewScore.setText(Integer.toString(user.getScore()));
+            user.getTestsBests()[testId] = result;
+            Toast.makeText(this, "Очки зачислены", Toast.LENGTH_LONG).show();
+            JSONHelper.exportUserToJSON(this, user);
+            if (data.isLogin()) {
+                data.sendUserData();
+            }
+        }
+        textViewQuestion1.setText(strResult);
+
+
+        buttonNext.setVisibility(View.INVISIBLE);
+        buttonNext.setClickable(false);
+        buttonPrev.setVisibility(View.INVISIBLE);
+        buttonPrev.setClickable(false);
+        questionCounter.setVisibility(View.INVISIBLE);
+
+        buttonReview.setText("Оцените материал");
+        buttonReview.setVisibility(View.VISIBLE);
+        buttonReview.setClickable(true);
+
+        ratingBar = (RatingBar) findViewById(R.id.ratingBarTest);
+        ratingBar.setStepSize(1);
+        ratingBar.setVisibility(View.VISIBLE);
+        ratingBar.setClickable(true);
+
+        buttonControl.setText("Вернуться к темам");
+        isTestFinished = true;
     }
 
     private void showQuestion(Question question) {
@@ -416,6 +444,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        soundPool.release();
+        super.onDestroy();
     }
 
     public int getItemChecked() {

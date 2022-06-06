@@ -17,7 +17,7 @@ public class User {
     public User() {
         //TODO Убрать, так как должно происходить чтение из файла
         progress = new Boolean[]{false, false, false, false, false, false};
-        access = new Boolean[]{true, false, false, false, false, false};
+        access = new Boolean[]{true, true, false, false, false, false};
         testsBests = new Integer[]{0, 0, 0, 0, 0, 0};
         gamesBests = new Integer[]{0, 0};
     }

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".games.MainFragment">
 
-
     <TextView
         android:id="@+id/textViewScheme"
         android:layout_width="match_parent"
@@ -20,7 +19,7 @@
         android:paddingRight="5dp"
         android:paddingBottom="5dp"
         android:visibility="visible"
-        android:text="Видишь ворота? На них отображается код, необходимый для их открытия. Вводи коды с помощью схем как можно быстрее. Но будь осторожен, ты можешь ошибиться всего 3 раза"
+        android:text="@string/welcome_scheme"
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,20 +35,50 @@
         android:layout_height="107dp"
         android:clickable="false"
         android:visibility="invisible"
-        app:constraint_referenced_ids="imageView3,buttonIn2,buttonOut0,buttonIn1,buttonOut2,buttonOut1,buttonOut3" />
+        app:constraint_referenced_ids="buttonIn1,buttonIn2,buttonOut0,buttonOut1,buttonOut2,buttonOut3"/>
+
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/cdGroup"
+        android:layout_width="143dp"
+        android:layout_height="107dp"
+        android:clickable="false"
+        android:visibility="visible"
+        app:constraint_referenced_ids="buttonInCd1,buttonInCd2,buttonInCd3,buttonInCd4,buttonOutCd1,buttonOutCd2"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/schemeGroup"
+        android:layout_width="143dp"
+        android:layout_height="107dp"
+        android:clickable="false"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="cdGroup,dcGroup,imageViewScheme" />
+
 
     <TextView
         android:id="@+id/textViewCode"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:background="@drawable/gate"
         android:gravity="center"
         android:text="0"
         android:textColor="@color/white"
         android:textSize="50sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView3"
+        app:layout_constraintBottom_toTopOf="@+id/imageViewScheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewScheme"
+        android:layout_width="245dp"
+        android:layout_height="302dp"
+        android:clickable="false"
+        android:src="@drawable/cd_4_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.501" />
 
     <ImageButton
         android:id="@+id/buttonOut0"
@@ -58,16 +87,24 @@
 
         android:layout_marginTop="58dp"
         android:background="@drawable/halfround_button_green"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
-        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+        app:layout_constraintStart_toEndOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
+
+    <ImageButton
+        android:id="@+id/buttonOutCd1"
+        android:layout_width="22dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="58dp"
+        android:background="@drawable/halfround_button_gray"
+        app:layout_constraintStart_toEndOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
 
     <ImageButton
         android:id="@+id/buttonOut1"
         android:layout_width="22dp"
         android:layout_height="43dp"
-
         android:background="@drawable/halfround_button_gray"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toEndOf="@+id/imageViewScheme"
         app:layout_constraintTop_toBottomOf="@+id/buttonOut0"
         android:contentDescription="TODO" />
 
@@ -77,30 +114,26 @@
         android:layout_height="43dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/halfround_button_gray"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toEndOf="@+id/imageViewScheme"
         app:layout_constraintTop_toBottomOf="@+id/buttonOut1" />
 
     <ImageButton
         android:id="@+id/buttonOut3"
         android:layout_width="22dp"
         android:layout_height="43dp"
-
         android:background="@drawable/halfround_button_gray"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toEndOf="@+id/imageViewScheme"
         app:layout_constraintTop_toBottomOf="@+id/buttonOut2" />
 
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="245dp"
-        android:layout_height="302dp"
-        android:clickable="false"
-        android:src="@drawable/dc2_4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/buttonOutCd2"
+        android:layout_width="22dp"
+        android:layout_height="43dp"
+        android:background="@drawable/halfround_button_gray"
+        app:layout_constraintStart_toEndOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOut2" />
+
 
     <ImageButton
         android:id="@+id/buttonIn1"
@@ -108,8 +141,26 @@
         android:layout_height="42dp"
         android:layout_marginTop="57dp"
         android:background="@drawable/round_button_gray"
-        app:layout_constraintEnd_toStartOf="@+id/imageView3"
-        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+        app:layout_constraintEnd_toStartOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
+
+    <ImageButton
+        android:id="@+id/buttonInCd1"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="57dp"
+        android:background="@drawable/round_button_gray"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
+
+    <ImageButton
+        android:id="@+id/buttonInCd2"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="112dp"
+        android:background="@drawable/round_button_gray"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
 
     <ImageButton
         android:id="@+id/buttonIn2"
@@ -117,9 +168,26 @@
         android:layout_height="42dp"
         android:layout_marginTop="176dp"
         android:background="@drawable/round_button_gray"
-        app:layout_constraintEnd_toStartOf="@+id/imageView3"
-        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+        app:layout_constraintEnd_toStartOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
 
+    <ImageButton
+        android:id="@+id/buttonInCd3"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="176dp"
+        android:background="@drawable/round_button_gray"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
+
+    <ImageButton
+        android:id="@+id/buttonInCd4"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="228dp"
+        android:background="@drawable/round_button_gray"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewScheme"
+        app:layout_constraintTop_toTopOf="@+id/imageViewScheme" />
 
     <Button
         android:id="@+id/buttonEnterCode"
@@ -131,7 +199,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewScheme" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

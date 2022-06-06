@@ -3,6 +3,7 @@ package com.example.infogames.games;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,11 +66,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if (id == R.id.buttonSchemeGame) {
             GameSchemeFragment gameSchemeFragment = new GameSchemeFragment();
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainerView, gameSchemeFragment, "gameSchemeFragment" ).commit();
+                    .replace(R.id.fragmentContainerView, gameSchemeFragment, "gameSchemeFragment").setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
         } else if (id == R.id.buttonQuizGame) {
             GameQuizFragment gameQuizFragment = new GameQuizFragment();
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainerView, gameQuizFragment, "gameQuizFragment" ).commit();
+                    .replace(R.id.fragmentContainerView, gameQuizFragment, "gameQuizFragment" ).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit();
         }
     }
 }

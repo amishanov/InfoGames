@@ -19,7 +19,7 @@ public interface UserService {
     Call<User> getUserByToken(@Header("Authorization") String token);
 
     @POST("v1/users")
-    Call<String> createUser(@Body User user);
+    Call<Void> createUser(@Body User user);
 
     @PUT("v1/users")
     Call<Void> updateData(@Body UserData userData);

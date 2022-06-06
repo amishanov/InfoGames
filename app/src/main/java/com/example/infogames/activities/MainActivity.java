@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         // TODO получение данных тем и тестов с сервера
         initialStart();
-        user.setScore(0);
+//        user.setScore(0);
 
     }
 

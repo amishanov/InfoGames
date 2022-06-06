@@ -6,6 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +24,6 @@ import com.example.infogames.model.Review;
 import com.example.infogames.model.Theme;
 import com.example.infogames.model.User;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,8 +39,10 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
     Theme theme;
     TextView textViewTheory;
     int itemChecked = 0;
+    SoundPool soundPool;
+    int soundAchievement;
     TextView textViewScore;
-    Button buttonReview, buttonFinishTests, btnSendErrorReport;
+    Button buttonReview, buttonFinishTheory, btnSendErrorReport;
 
 
     @Override
@@ -55,12 +58,21 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         textViewScore = (TextView) findViewById(R.id.textViewScore);
         buttonReview = (Button) findViewById(R.id.buttonReviewTheory);
         buttonReview.setOnClickListener(this);
-        buttonFinishTests = (Button) findViewById(R.id.buttonFinishTheory);
-        buttonFinishTests.setOnClickListener(this);
+        buttonFinishTheory = (Button) findViewById(R.id.buttonFinishTheory);
+        buttonFinishTheory.setOnClickListener(this);
         btnSendErrorReport = findViewById(R.id.buttonSendErrorTheory);
         btnSendErrorReport.setOnClickListener(this);
 
-        // TODO Доставать тему и отображать её, ID нужен для работы со списком в User
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .build();
+        soundPool =  new SoundPool.Builder()
+                .setMaxStreams(2)
+                .setAudioAttributes(audioAttributes)
+                .build();
+        soundAchievement = soundPool.load(this, R.raw.achivment_bell, 1);
+
         Bundle arguments = getIntent().getExtras();
         if (arguments != null) {
             theoryId = arguments.getInt("theoryId");
@@ -113,10 +125,12 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
                 user.getProgress()[theoryId] = true;
                 user.setScore(user.getScore()+5);
                 textViewScore.setText(Integer.toString(user.getScore()));
+                buttonFinishTheory.setVisibility(View.GONE);
                 JSONHelper.exportUserToJSON(this, user);
                 Toast.makeText(this,
                         "Поздравляю с изучением новой темы! Тебе были начислены очки",
                         Toast.LENGTH_LONG).show();
+                soundPool.play(soundAchievement, 1, 1, 1, 0, 1);
                 if (data.isLogin()) {
                     data.sendUserData();
                 }
@@ -142,7 +156,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         } else if (id == R.id.buttonSendErrorTheory) {
             AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
             itemChecked = 0;
-            String [] errors = new String[]{"Опечака", "Неправильное отображение", "Что-то ещё"};
+            String [] errors = new String[]{"Опечатка", "Неправильное отображение", "Что-то ещё"};
             aBuilder.setSingleChoiceItems(errors,
                             0, new DialogInterface.OnClickListener() {
                                 @Override
@@ -153,7 +167,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int btId) {
-                            Toast.makeText(TheoryActivity.this, Integer.toString(TheoryActivity.this.getItemChecked()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TheoryActivity.this, "Спасибо! Мы обязательно исправим ошибку", Toast.LENGTH_SHORT).show();
                             // TODO send error report
                         }
                     })
@@ -181,5 +195,11 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        soundPool.release();
+        super.onDestroy();
     }
 }

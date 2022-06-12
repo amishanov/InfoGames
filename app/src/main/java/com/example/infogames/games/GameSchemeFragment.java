@@ -156,14 +156,14 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
         } else if (id == R.id.buttonInCd2) {
             inStateCd = 1;
             setUpInDc(1);
-            buttonsOutCd[0].setImageResource(R.drawable.halfround_button_green);
-            buttonsOutCd[1].setImageResource(R.drawable.halfround_button_gray);
+            buttonsOutCd[0].setImageResource(R.drawable.halfround_button_gray);
+            buttonsOutCd[1].setImageResource(R.drawable.halfround_button_green);
         }
         else if (id == R.id.buttonInCd3){
             inStateCd = 2;
             setUpInDc(inStateCd);
-            buttonsOutCd[0].setImageResource(R.drawable.halfround_button_gray);
-            buttonsOutCd[1].setImageResource(R.drawable.halfround_button_green);
+            buttonsOutCd[0].setImageResource(R.drawable.halfround_button_green);
+            buttonsOutCd[1].setImageResource(R.drawable.halfround_button_gray);
         } else if (id == R.id.buttonInCd4) {
             inStateCd = 3;
             setUpInDc(inStateCd);

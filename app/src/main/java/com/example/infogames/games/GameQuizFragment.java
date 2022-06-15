@@ -26,6 +26,7 @@ import com.example.infogames.model.Test;
 import com.example.infogames.model.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -133,7 +134,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
 
         } else if (id == R.id.btnStartFinishGame) {
             if (!gameRunning) {
-                btnStartEnd.setText("Завершить игру");
+                btnStartEnd.setText(R.string.finish_game);
                 gameRunning = true;
                 clQuizContainer.setVisibility(View.VISIBLE);
                 countDownTimer = new CountDownTimer(timeLeft, 1000) {
@@ -205,6 +206,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
             else
                 currentQuestion = QuestionGenerator.generateBinaryToDecimal();
             setUpQuestion();
+            System.out.println(Arrays.toString(currentQuestion.getAnswers()));
         } else {
             currentQuestionNum++;
             currentQuestion = questionList.get(currentQuestionNum);

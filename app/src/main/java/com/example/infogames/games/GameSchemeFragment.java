@@ -257,7 +257,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     }
 
     public void startGame() {
-        btnStartEnd.setText("Закончить игру");
+        btnStartEnd.setText(R.string.finish_game);
         countDownTimer = new CountDownTimer(timeLeft, 1000) {
             @Override
             public void onTick(long l) {

@@ -4,7 +4,6 @@ import com.example.infogames.model.Question;
 
 public class QuestionGenerator {
 
-
     public static Question generateBinaryToDecimal() {
         Question question = new Question();
         question.setType(2);
@@ -16,9 +15,9 @@ public class QuestionGenerator {
             if (i == rAnswer)
                 answers[i] = answer;
             else if ((int) (Math.random() * 2) == 1)
-                answers[i] = answer + (int) (Math.random() * 10 + 1);
+                answers[i] = answer + (int) (Math.random() * 25 + 1);
             else
-                answers[i] = answer - (int) (Math.random() * 10 - 1);
+                answers[i] = answer - (int) (Math.random() * 25 - 1);
         }
         String questionText = Integer.toBinaryString(answer) + " в двоичной системе эквивалентно десятичному" +
                 "";
@@ -40,9 +39,9 @@ public class QuestionGenerator {
             if (i == rAnswer)
                 answers[i] = answer;
             else if ((int) (Math.random() * 2) == 1)
-                answers[i] = answer + (int) (Math.random() * 10 + 1);
+                answers[i] = answer + (int) (Math.random() * 25 + 1);
             else
-                answers[i] = answer - (int) (Math.random() * 10 - 1);
+                answers[i] = answer - (int) (Math.random() * 25 - 1);
         }
         String questionText = answer + " в десятичной системе эквивалентно двоичному";
         String[] strAnswers = {Integer.toBinaryString(answers[0])+"", Integer.toBinaryString(answers[1])+"",
@@ -64,9 +63,9 @@ public class QuestionGenerator {
             if (i == rAnswer)
                 answers[i] = answer;
             else if ((int) (Math.random() * 2) == 1)
-                answers[i] = answer + (int) (Math.random() * 10 + 1);
+                answers[i] = answer + (int) (Math.random() * 25 + 1);
             else
-                answers[i] = answer - (int) (Math.random() * 10 - 1);
+                answers[i] = answer - (int) (Math.random() * 25 - 1);
         }
         String questionText = Integer.toHexString(answer) + " в шестнадцатеричной системе эквивалентно десятичному" +
                 "";
@@ -88,9 +87,9 @@ public class QuestionGenerator {
             if (i == rAnswer)
                 answers[i] = answer;
             else if ((int) (Math.random() * 2) == 1)
-                answers[i] = answer + (int) (Math.random() * 10 + 1);
+                answers[i] = answer + (int) (Math.random() * 25 + 1);
             else
-                answers[i] = answer - (int) (Math.random() * 10 - 1);
+                answers[i] = answer - (int) (Math.random() * 25 - 1);
         }
         String questionText = answer + " в десятичной системе эквивалентно шестнадцатеричному";
         String[] strAnswers = {Integer.toHexString(answers[0])+"", Integer.toHexString(answers[1])+"",

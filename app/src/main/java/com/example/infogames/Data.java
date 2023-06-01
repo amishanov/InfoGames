@@ -21,7 +21,7 @@ public class Data {
     private Data() {
         user = new User();
         retrofitService = new RetrofitService();
-        System.out.println("DATA CONSTRUCTOR");
+//        System.out.println("DATA CONSTRUCTOR");
     }
 
     public static void initInstance() {
@@ -70,14 +70,14 @@ public class Data {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.code() == 200) {
-                    System.out.println("sendUserDa  ta: PASS");
+//                    System.out.println("sendUserDa  ta: PASS");
                 } else if (response.code() == 304) {
-                    System.out.println("sendUserData: Failed 304");
+//                    System.out.println("sendUserData: Failed 304");
                 }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                System.out.println("sendUserData: Failed, " + t);
+//                System.out.println("sendUserData: Failed, " + t);
             }
         });
     }
@@ -89,15 +89,15 @@ public class Data {
         reviewService.createReview(user.getToken(), review).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.code() == 201)
-                    System.out.println("SendReview: PASS");
-                else
-                    System.out.println("SendReview: FAILED 409");
+//                if (response.code() == 201)
+//                    System.out.println("SendReview: PASS");
+//                else
+//                    System.out.println("SendReview: FAILED 409");
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                System.out.println("sendUserData: Failed, " + t);
+//                System.out.println("sendUserData: Failed, " + t);
             }
 
         });

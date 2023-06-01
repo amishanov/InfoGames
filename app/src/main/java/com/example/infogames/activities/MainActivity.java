@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView textViewScore;
     List<Theme> themes;
     List<Test> tests;
-    //TODO во всех активостях раскидать задачи между onStart и onCreate
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user = data.getUser();
         retrofitService = data.getRetrofitService();
 
-        // Здесь скачивание данных
-
+        // TODO Получение данных из ресурнсых файлов, если при первом (первом-первом) запуске нет доступа к серверу
         if (!JSONHelper.check(this)) {
             JSONHelper.exportUserToJSON(this, user);
             // TODO вместо null сделать экспорт из материалов ресурсов
@@ -69,7 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (user.getToken() != null) {
             data.setIsLogin(true);
         }
-        // TODO получение данных тем и тестов с сервера
+
+        // TODO Нужно сделать запрос только при старте приложения
+        //  (Можно в Singletone добавить переменную для проверки)
+
         initialStart();
 //        user.setScore(0);
 
@@ -96,28 +98,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onResponse(Call<List<Test>> call, Response<List<Test>> response) {
                     if (response.code() == 200) {
-                        System.out.println("GET TEST: PASS");
+//                        System.out.println("GET TEST: PASS");
 //                        tests = response.body();
                         JSONHelper.exportTestsToJSON(MainActivity.this, response.body());
 //                        System.out.println(tests.get(0).getQuestionList().get(0));
 //                        System.out.println(tests.get(1));
 
                     } else if (response.code() == 404){
-                        System.out.println("GET TEST NOT FOUND");
+//                        System.out.println("GET TEST NOT FOUND");
                     } else {
-                        System.out.println("GET TEST SOMETHING GOES WRONG...");
+//                        System.out.println("GET TEST SOMETHING GOES WRONG...");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<Test>> call, Throwable t) {
-                    System.out.println("GET TEST FAILED");
+//                    System.out.println("GET TEST FAILED");
                     Toast.makeText(MainActivity.this, "" +
                             "Не удалось подключиться к серверу для синхронизации тестов",
                             Toast.LENGTH_LONG).show();
                 }
             });
-        RetrofitService retrofitService = data.getRetrofitService();
+//        RetrofitService retrofitService = data.getRetrofitService();
         ThemeService themeService = retrofitService.getRetrofit().create(ThemeService.class);
         themeService.getThemes().enqueue(new Callback<List<Theme>>() {
                 @Override
@@ -125,15 +127,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (response.code() == 200) {
 //                        MainActivity.this.themes = response.body();
                         JSONHelper.exportThemesToJSON(MainActivity.this, response.body());
-                        System.out.println("getThemes: themes was found");
+//                        System.out.println("getThemes: themes was found");
                     } else if (response.code() == 404) {
-                        System.out.println("Error: Themes was not found");
+//                        System.out.println("Error: Themes was not found");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<Theme>> call, Throwable t) {
-                    System.out.println("Error: не удалось подключиться для получения тем");
+//                    System.out.println("Error: не удалось подключиться для получения тем");
                     Toast.makeText(MainActivity.this, "" +
                                     "Не удалось подключиться к серверу для синхронизации тем",
                             Toast.LENGTH_LONG).show();
@@ -156,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonLearn) {
-            System.out.println("user: " + user);
-            System.out.println("data user: " + data.getUser());
+//            System.out.println("user: " + user);
+//            System.out.println("data user: " + data.getUser());
             Intent intent = new Intent(this, ThemesActivity.class);
             startActivity(intent);
         } else if (id == R.id.buttonPlay) {

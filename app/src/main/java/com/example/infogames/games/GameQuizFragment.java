@@ -243,7 +243,11 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     public void setUpQuestionList() {
         tests = JSONHelper.importTestsFromJSON(getActivity());
         questionList = new ArrayList<>();
-        System.out.println(tests.get(0));
+//        System.out.println(tests.get(0));
+        if (tests == null) {
+            Toast.makeText(getContext(), "Нет доступных вопросов", Toast.LENGTH_LONG).show();
+            return;
+        }
         for (Test test: tests) {
             for (Question question: test.getQuestionList()) {
                 if (question.getType() == 2)

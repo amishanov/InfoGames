@@ -20,6 +20,7 @@ public class JSONHelper {
     private static final String FILE_TESTS = "tests.json";
     private static final String FILE_THEMES = "themes.json";
 
+    //TODO сделать нормальную проверку существования файла, а не return через exeption
     public static boolean check(Context context) {
         try(FileInputStream fileInputStream = context.openFileInput(FILE_USER)) {
             return true;

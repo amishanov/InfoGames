@@ -59,7 +59,7 @@ public class ThemesActivity extends AppCompatActivity {
         data = Data.getInstance();
         user = data.getUser();
         textViewScore = (TextView) findViewById(R.id.textViewScore);
-        System.out.println(user);
+//        System.out.println(user);
 
         tests = JSONHelper.importTestsFromJSON(this);
         themes = JSONHelper.importThemesFromJSON(this);
@@ -113,7 +113,7 @@ public class ThemesActivity extends AppCompatActivity {
 //                    Theme theme = themes.get(0);
 //                    System.out.println(theme);
                     Theme theme = themes.get(groupPosition);
-                    System.out.println(groupPosition);
+//                    System.out.println(groupPosition);
                     intent.putExtra("theory", theme);
                     intent.putExtra("theoryId", groupPosition);
                     startActivity(intent);
@@ -164,12 +164,16 @@ public class ThemesActivity extends AppCompatActivity {
     }
 
     private void initListData() {
+        if (themes == null) {
+            Toast.makeText(getApplicationContext(), "Нет доступных тем", Toast.LENGTH_LONG).show();
+            return;
+        }
         for (Theme theme: themes) {
             listGroup.add(theme.getThemeName());
         }
 
 
-        // TODO сделать, чтобы добовлялись
+        // TODO сделать, чтобы добавлялись
         List<String> list1 = new ArrayList<>();
         for (String item : innerList1) {
             list1.add(item);

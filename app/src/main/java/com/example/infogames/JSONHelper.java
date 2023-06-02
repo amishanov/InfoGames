@@ -1,17 +1,18 @@
 package com.example.infogames;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.infogames.model.Test;
 import com.example.infogames.model.Theme;
 import com.example.infogames.model.User;
 import com.google.gson.Gson;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class JSONHelper {
     private static final String FILE_TESTS = "tests.json";
     private static final String FILE_THEMES = "themes.json";
 
-    //TODO сделать нормальную проверку существования файла, а не return через exeption
+    //TODO сделать нормальную проверку существования файла, а не return через exception
     public static boolean check(Context context) {
         try(FileInputStream fileInputStream = context.openFileInput(FILE_USER)) {
             return true;
@@ -40,7 +41,6 @@ public class JSONHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
@@ -48,7 +48,8 @@ public class JSONHelper {
         try(FileInputStream fileInputStream = context.openFileInput(FILE_USER);
             InputStreamReader streamReader = new InputStreamReader(fileInputStream)){
             Gson gson = new Gson();
-            return gson.fromJson(streamReader, User.class);
+            User user = gson.fromJson(streamReader, User.class);
+            return user;
         }
         catch (IOException ex){
             ex.printStackTrace();
@@ -56,9 +57,9 @@ public class JSONHelper {
         return null;
     }
 
+    // Обёртка для GSON для тестов (чтобы вызывать .class метод)
     private static class TestsItems {
         private List<Test> tests;
-
         List<Test> getTests() {
             return tests;
         }
@@ -96,9 +97,17 @@ public class JSONHelper {
         return null;
     }
 
+    public static List<Test> importTestsFromRes(Context context) {
+        InputStream resInputStream = context.getResources().openRawResource(R.raw.tests);
+        String jsonTests = readTextFile(resInputStream);
+        Gson gson = new Gson();
+        TestsItems testsItems = gson.fromJson(jsonTests, TestsItems.class);
+        return testsItems.getTests();
+    }
+
+    // Обёртка для GSON для тем (чтобы вызывать .class метод)
     private static class ThemesItems {
         private List<Theme> themes;
-
         List<Theme> getThemes() {
             return themes;
         }
@@ -106,6 +115,7 @@ public class JSONHelper {
             this.themes = themes;
         }
     }
+
     public static boolean exportThemesToJSON(Context context, List<Theme> themes) {
         Gson gson = new Gson();
         ThemesItems themesItems = new ThemesItems();
@@ -133,5 +143,30 @@ public class JSONHelper {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public static List<Theme> importThemesFromRes(Context context) {
+        InputStream resInputStream = context.getResources().openRawResource(R.raw.themes);
+        String jsonThemes = readTextFile(resInputStream);
+        Gson gson = new Gson();
+        ThemesItems themesItems = gson.fromJson(jsonThemes, ThemesItems.class);
+        return themesItems.getThemes();
+    }
+
+    private static String readTextFile(InputStream inputStream) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        byte buf[] = new byte[1024];
+        int len;
+        try {
+            while ((len = inputStream.read(buf)) != -1) {
+                outputStream.write(buf, 0, len);
+            }
+            outputStream.close();
+            inputStream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return outputStream.toString();
     }
 }

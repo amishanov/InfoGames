@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -53,14 +54,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user = data.getUser();
         retrofitService = data.getRetrofitService();
 
-        // TODO Получение данных из ресурнсых файлов, если при первом (первом-первом) запуске нет доступа к серверу
+        // Это загрузка из ресурсных файлов
+        // TODO сделать так, чтобы выполнялось единожды при первом-первом запуске при отсутствии подключения к серверу
+        tests = JSONHelper.importTestsFromRes(this);
+        themes = JSONHelper.importThemesFromRes(this);
+        JSONHelper.exportTestsToJSON(this, tests);
+        JSONHelper.exportThemesToJSON(this, themes);
+
         if (!JSONHelper.check(this)) {
             JSONHelper.exportUserToJSON(this, user);
-            // TODO вместо null сделать экспорт из материалов ресурсов
-            JSONHelper.exportThemesToJSON(this, null);
-            JSONHelper.exportTestsToJSON(this, null);
+
         } else {
+            //TODO выяснить, почему нужно клонировать, а не просто перезаписать ссылку (по-моему, из-за этого что-то ломалось)
             user.clone(JSONHelper.importUserFromJSON(this));
+            System.out.println("WROOOOONG");
 //            user.getAccess()[1] = false;
 //            JSONHelper.exportUserToJSON(this, user);
         }
@@ -119,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             Toast.LENGTH_LONG).show();
                 }
             });
-//        RetrofitService retrofitService = data.getRetrofitService();
+        RetrofitService retrofitService = data.getRetrofitService();
         ThemeService themeService = retrofitService.getRetrofit().create(ThemeService.class);
         themeService.getThemes().enqueue(new Callback<List<Theme>>() {
                 @Override

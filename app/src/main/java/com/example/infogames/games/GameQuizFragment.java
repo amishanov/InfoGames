@@ -27,19 +27,18 @@ import com.example.infogames.model.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 
 public class GameQuizFragment extends Fragment implements View.OnClickListener {
 
-    Button btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4;
+    Button buttonAnswer1, buttonAnswer2, buttonAnswer3, buttonAnswer4;
     TextView tvQuestion;
     ConstraintLayout clQuizContainer;
     ImageView ivTimer, ivWrong1, ivWrong2, ivWrong3;
     TextView tvPoints, tvTimer, tvScore;
-    Button btnStartEnd;
+    Button buttonStartEnd;
     long timeLeft = 30000;
     boolean gameRunning = false;
     int errors = 0, points = 0;
@@ -55,7 +54,6 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     public GameQuizFragment() {
     }
 
-    // TODO: Rename and change types and number of parameters
     public static GameQuizFragment newInstance(String param1, String param2) {
         GameQuizFragment fragment = new GameQuizFragment();
         Bundle args = new Bundle();;
@@ -75,14 +73,14 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
 
         gameActivity = (GameActivity) getActivity();
         clQuizContainer = view.findViewById(R.id.quizContainer);
-        btnAnswer1 = view.findViewById(R.id.buttonAnswer1);
-        btnAnswer1.setOnClickListener(this);
-        btnAnswer2 = view.findViewById(R.id.buttonAnswer2);
-        btnAnswer2.setOnClickListener(this);
-        btnAnswer3 = view.findViewById(R.id.buttonAnswer3);
-        btnAnswer3.setOnClickListener(this);
-        btnAnswer4 = view.findViewById(R.id.buttonAnswer4);
-        btnAnswer4.setOnClickListener(this);
+        buttonAnswer1 = view.findViewById(R.id.buttonAnswer1);
+        buttonAnswer1.setOnClickListener(this);
+        buttonAnswer2 = view.findViewById(R.id.buttonAnswer2);
+        buttonAnswer2.setOnClickListener(this);
+        buttonAnswer3 = view.findViewById(R.id.buttonAnswer3);
+        buttonAnswer3.setOnClickListener(this);
+        buttonAnswer4 = view.findViewById(R.id.buttonAnswer4);
+        buttonAnswer4.setOnClickListener(this);
         tvQuestion = view.findViewById(R.id.textViewQuizQuestion);
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -112,9 +110,9 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
         ivTimer.setVisibility(View.VISIBLE);
         tvPoints.setVisibility(View.VISIBLE);
         tvTimer.setVisibility(View.VISIBLE);
-        btnStartEnd = getActivity().findViewById(R.id.btnStartFinishGame);
-        btnStartEnd.setVisibility(View.VISIBLE);
-        btnStartEnd.setOnClickListener(this);
+        buttonStartEnd = getActivity().findViewById(R.id.buttonStartFinishGame);
+        buttonStartEnd.setVisibility(View.VISIBLE);
+        buttonStartEnd.setOnClickListener(this);
     }
 
     @Override
@@ -132,9 +130,9 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
         } else if (id == R.id.buttonAnswer4) {
             updatePoints(checkQuestion(3));
 
-        } else if (id == R.id.btnStartFinishGame) {
+        } else if (id == R.id.buttonStartFinishGame) {
             if (!gameRunning) {
-                btnStartEnd.setText(R.string.finish_game);
+                buttonStartEnd.setText(R.string.finish_game);
                 gameRunning = true;
                 clQuizContainer.setVisibility(View.VISIBLE);
                 countDownTimer = new CountDownTimer(timeLeft, 1000) {
@@ -146,7 +144,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
 
                     @Override
                     public void onFinish() {
-                        btnStartEnd.performClick();
+                        buttonStartEnd.performClick();
                     }
                 };
                 updateQuestion();
@@ -154,7 +152,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
 
             } else {
                 countDownTimer.cancel();
-                btnStartEnd.setVisibility(View.INVISIBLE);
+                buttonStartEnd.setVisibility(View.INVISIBLE);
                 clQuizContainer.setVisibility(View.INVISIBLE);
                 String res = "";
                 User user = gameActivity.getUser();
@@ -166,7 +164,6 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
                     gamesBests = user.getGamesBests();
 
                 if (points > gamesBests[1]) {
-                    //TODO добавить музыку
                     soundPool.play(soundRecord, 1, 1, 1, 0, 1);
                     res = "Вау! Это же новый рекорд. Поздравляю!";
                     int sc = user.getScore();
@@ -217,10 +214,10 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     public void setUpQuestion() {
         tvQuestion.setText(currentQuestion.getQuestion());
         String[] answers = currentQuestion.getAnswers();
-        btnAnswer1.setText(answers[0]);
-        btnAnswer2.setText(answers[1]);
-        btnAnswer3.setText(answers[2]);
-        btnAnswer4.setText(answers[3]);
+        buttonAnswer1.setText(answers[0]);
+        buttonAnswer2.setText(answers[1]);
+        buttonAnswer3.setText(answers[2]);
+        buttonAnswer4.setText(answers[3]);
     }
 
     public boolean checkQuestion(int answer) {
@@ -243,7 +240,6 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
     public void setUpQuestionList() {
         tests = JSONHelper.importTestsFromJSON(getActivity());
         questionList = new ArrayList<>();
-//        System.out.println(tests.get(0));
         if (tests == null) {
             Toast.makeText(getContext(), "Нет доступных вопросов", Toast.LENGTH_LONG).show();
             return;
@@ -282,7 +278,7 @@ public class GameQuizFragment extends Fragment implements View.OnClickListener {
             if (updateErrors())
                 updateQuestion();
             else
-                btnStartEnd.performClick();
+                buttonStartEnd.performClick();
         }
     }
 

@@ -72,13 +72,13 @@
         android:id="@+id/fragmentContainerView"
         android:layout_width="match_parent"
         android:layout_height="524dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnStartFinishGame"
+        app:layout_constraintBottom_toTopOf="@+id/buttonStartFinishGame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCode" />
 
     <Button
-        android:id="@+id/btnStartFinishGame"
+        android:id="@+id/buttonStartFinishGame"
         android:layout_width="208dp"
         android:layout_height="48dp"
         android:layout_marginBottom="16dp"

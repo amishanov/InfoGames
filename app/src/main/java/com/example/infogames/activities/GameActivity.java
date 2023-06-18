@@ -43,8 +43,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        //TODO Штуки, которые могут понадобиться при возобновлении работы
         textViewScore.setText(Integer.toString(user.getScore()));
         ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
         if (data.isLogin())

@@ -53,7 +53,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     Toolbar toolbar;
     TextView textViewScore;
     RatingBar ratingBar;
-    Button buttonNext, buttonPrev, buttonReview, buttonControl, btnSendError;
+    Button buttonNext, buttonPrev, buttonReview, buttonControl, buttonSendError;
     RadioButton rb1, rb2, rb3, rb4;
     RadioGroup rg;
     EditText editTextAnswer;
@@ -101,7 +101,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             buttonProfile.setImageResource(R.drawable.ic_profile_login);
         }
 
-
         isTestFinished = false;
         // Инициализация элементов
         viewInit();
@@ -113,13 +112,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             welcomeString += "\nТвой прошлый лучший результат: " + user.getTestsBests()[testId] ;
         textViewQuestion1.setText(welcomeString);
 
-
-
+        // TODO переписать это непотребство под что-нибудь, что не будет null'ом
         answers = new ArrayList<>();
         for (int i = 0; i < testSize; i++) answers.add(null);
-
-        // TODO Фиксация результатов тестирования (не забыть отправку на сервер, если залогинен пользователь), фиксация очков
-
     }
 
     @Override
@@ -150,8 +145,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         buttonPrev.setOnClickListener(this);
         buttonReview = (Button) findViewById(R.id.buttonReview);
         buttonReview.setOnClickListener(this);
-        btnSendError = findViewById(R.id.buttonSendErrorTest);
-        btnSendError.setOnClickListener(this);
+        buttonSendError = findViewById(R.id.buttonSendErrorTest);
+        buttonSendError.setOnClickListener(this);
         editTextAnswer = (EditText) findViewById(R.id.editTextAnswer);
         textViewQuestion1 = (TextView) findViewById(R.id.textViewQuestion1);
         textViewQuestion2 = (TextView) findViewById(R.id.textViewQuestion2);
@@ -166,6 +161,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    // Отладочная функция
     private ArrayList<Question> generateTestForTest() {
         String[] answers = {"Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4"};
         String[] answers1 = {"Ох", "Лол", "Я", "Ответ"};
@@ -232,7 +228,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
         } else if (id == R.id.buttonReview) {
             if (isTestFinished) {
-                // TODO формирование ревью
                 RetrofitService retrofitService = data.getRetrofitService();
                 Review review = new Review();
                 review.setEvaluation((int) ratingBar.getRating());
@@ -254,7 +249,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
                 showQuestion(questionList.get(currentQuestion));
                 editTextAnswer.setVisibility(View.VISIBLE);
                 editTextAnswer.setClickable(true);
-                btnSendError.setVisibility(View.VISIBLE);
+                buttonSendError.setVisibility(View.VISIBLE);
             }
         } else if (id == R.id.buttonSendErrorTest) {
             AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
@@ -287,7 +282,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         editTextAnswer.setVisibility(View.INVISIBLE);
         editTextAnswer.setClickable(false);
         int result = check();
-        btnSendError.setVisibility(View.INVISIBLE);
+        buttonSendError.setVisibility(View.INVISIBLE);
         String strResult = "Результат твоего тестирования: " + result;
         Integer prevBest = user.getTestsBests()[testId];
         if (prevBest == null) {

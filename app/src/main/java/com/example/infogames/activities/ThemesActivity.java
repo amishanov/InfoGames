@@ -32,6 +32,7 @@ public class ThemesActivity extends AppCompatActivity {
 
     Data data;
     User user;
+    // Хардкодовый лист для отладки
     String[] expList = {"Тема 1: Общие понятия информатики", "Тема 2: Системы счисления",
             "Тема 3: Булева алгебра", "Тема 4: Логические функции",
             "Тема 5: Цифровая схемотехника",  "Тема 6: Алгоритмы и элементы программирования"};
@@ -59,7 +60,6 @@ public class ThemesActivity extends AppCompatActivity {
         data = Data.getInstance();
         user = data.getUser();
         textViewScore = (TextView) findViewById(R.id.textViewScore);
-//        System.out.println(user);
 
         tests = JSONHelper.importTestsFromJSON(this);
         themes = JSONHelper.importThemesFromJSON(this);
@@ -77,6 +77,7 @@ public class ThemesActivity extends AppCompatActivity {
                 if (user.getAccess()[i])
                     return false;
                 else {
+                    // Приобретение темы за очки
                     AlertDialog.Builder aBuilder = new AlertDialog.Builder(ThemesActivity.this);
                     aBuilder.setMessage("Ты желаешь приобрести эту тему за 10 очков?")
                             .setCancelable(true)
@@ -109,11 +110,7 @@ public class ThemesActivity extends AppCompatActivity {
                                         int groupPosition, int childPosition, long id) {
                 if (childPosition == 0) {
                     Intent intent = new Intent(ThemesActivity.this, TheoryActivity.class);
-//                    themes = JSONHelper.importThemesFromJSON(this);
-//                    Theme theme = themes.get(0);
-//                    System.out.println(theme);
                     Theme theme = themes.get(groupPosition);
-//                    System.out.println(groupPosition);
                     intent.putExtra("theory", theme);
                     intent.putExtra("theoryId", groupPosition);
                     startActivity(intent);

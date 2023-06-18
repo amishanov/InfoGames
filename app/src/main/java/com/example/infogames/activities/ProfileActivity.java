@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,13 +31,12 @@ import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "ProfileActivity";
     private Toolbar toolbar;
     private Data data;
     private TextView tvResults;
     private Button buttonLogin, buttonSignOut, buttonReg, buttonSignUp, buttonSignIn;
     private EditText etRegLogin, etRegEmail, etRegPassword, etRegRePassword, etLogin, etPassword;
-
-    //TODO Не забыть проверку логинов и паролей на ненужные символы
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,93 +61,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             setContentView(R.layout.sing_up);
             initToolbar();
             initElementsReg();
-
-        } else if (id == R.id.buttonSignIn) {
+        }
+        else if (id == R.id.buttonSignIn) {
             setContentView(R.layout.sign_in);
             initToolbar();
             initElementsLogin();
-
-        } else if (id == R.id.buttonLogin) {
-            //TODO СИНХРОНИЗАЦИЯ ДАННЫХ С СЕРВЕРОМ
-            RetrofitService retrofitService = data.getRetrofitService();
-            UserService userService = retrofitService.getRetrofit().create(UserService.class);
-            String login = etLogin.getText().toString();
-            String password = etPassword.getText().toString();
-            try {
-                MessageDigest md = MessageDigest.getInstance("MD5");
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            StringBuilder hexPassword = new StringBuilder();
-            for (byte aByteData : password.getBytes()) {
-                String hex = Integer.toHexString(0xff & aByteData);
-                if (hex.length() == 1) hexPassword.append('0');
-                hexPassword.append(hex);
-            }
-            userService.getUserByLogin(login+":"+ hexPassword).enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.code() == 200) {
-                        User user = response.body();
-                        System.out.println(user);
-                        setContentView(R.layout.activity_profile);
-                        initToolbar();
-                        initElementsProf();
-                        data.setIsLogin(true);
-                        AlertDialog.Builder aBuilder = new AlertDialog.Builder(ProfileActivity.this);
-                        aBuilder.setMessage("Выбери, данные откуда будут использоваться далее")
-                                .setCancelable(false)
-                                .setPositiveButton("Приложение", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int btId) {
-                                        data.getUser().setLogin(user.getLogin());
-                                        data.getUser().setEmail(user.getEmail());
-                                        data.getUser().setPassword(user.getPassword());
-                                        data.getUser().setToken(user.getToken());
-                                        JSONHelper.exportUserToJSON(ProfileActivity.this, data.getUser());
-                                        data.sendUserData();
-                                    }
-                                })
-                                .setNegativeButton("Сервер", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int btId) {
-                                        data.getUser().clone(user);
-                                        JSONHelper.exportUserToJSON(ProfileActivity.this, data.getUser());
-                                        String results = "Лучшие результаты за тестирования:\nТест 1: 0/3\nТест 2: 5/10\nТест 3: 0/10\nТест 4: 0/10\nТест 5: 0/10\nТест 6: 0/10\n\nРекорды:\n";
-                                        User user = data.getUser();
-                                        Integer[] gamesBests = user.getGamesBests();
-                                        if (gamesBests.length > 1)
-                                            results += "Логическая схема: " +  gamesBests[0] + " очков\n" + "Викторина: " + gamesBests[1]+ " очков";
-                                        tvResults.setText(results);
-                                    }
-                                });
-                        AlertDialog alert = aBuilder.create();
-                        alert.setTitle("Синхронизация");
-                        alert.show();
-
-
-                    } else if (response.code() == 404) {
-                        Toast.makeText(ProfileActivity.this,
-                                "Неправильный логин или пароль", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(ProfileActivity.this,
-                                "Странная ошибка... свяжись с администратором",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Toast.makeText(ProfileActivity.this,
-                            "Ой-ой, не могу подключиться к серверу", Toast.LENGTH_LONG).show();
-                    Logger.getLogger(ProfileActivity.class.getName()).log(Level.SEVERE, "", t);
-                    System.out.println("Login: FAILED");
-                }
-            });
-
-        } else if (id == R.id.buttonReg) {
-            Registration();
-
-        } else if (id == R.id.buttonSignOut) {
+        }
+        else if (id == R.id.buttonSignOut) {
             setContentView(R.layout.sign_in);
             initToolbar();
             initElementsLogin();
@@ -156,12 +76,91 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             JSONHelper.exportUserToJSON(this, data.getUser());
             data.setIsLogin(false);
         }
+        else if (id == R.id.buttonLogin) {
+            Login();
+
+        } else if (id == R.id.buttonReg) {
+            Registration();
+        }
     }
 
+    // Метод для входа
+    private void Login() {
+        // Отправка данных при попытке входа. Пароль переводится в hex число (пародия на шифрование)
+        RetrofitService retrofitService = data.getRetrofitService();
+        UserService userService = retrofitService.getRetrofit().create(UserService.class);
+        String login = etLogin.getText().toString();
+        String password = etPassword.getText().toString();
+        StringBuilder hexPassword = new StringBuilder();
+        for (byte aByteData : password.getBytes()) {
+            String hex = Integer.toHexString(0xff & aByteData);
+            if (hex.length() == 1) hexPassword.append('0');
+            hexPassword.append(hex);
+        }
+        // Если вход успешный, пользователь выбирает тип синхронизации
+        userService.getUserByLogin(login+":"+ hexPassword).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.code() == 200) {
+                    User user = response.body();
+                    System.out.println(user);
+                    setContentView(R.layout.activity_profile);
+                    initToolbar();
+                    initElementsProf();
+                    data.setIsLogin(true);
+                    AlertDialog.Builder aBuilder = new AlertDialog.Builder(ProfileActivity.this);
+                    aBuilder.setMessage("Выбери, данные откуда будут использоваться далее")
+                            .setCancelable(false)
+                            .setPositiveButton("Приложение", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int btId) {
+                                    data.getUser().setLogin(user.getLogin());
+                                    data.getUser().setEmail(user.getEmail());
+                                    data.getUser().setPassword(user.getPassword());
+                                    data.getUser().setToken(user.getToken());
+                                    JSONHelper.exportUserToJSON(ProfileActivity.this, data.getUser());
+                                    data.sendUserData();
+                                }
+                            })
+                            .setNegativeButton("Сервер", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int btId) {
+                                    data.getUser().clone(user);
+                                    JSONHelper.exportUserToJSON(ProfileActivity.this, data.getUser());
+                                    String results = "Лучшие результаты за тестирования:\nТест 1: 0/3\nТест 2: 5/10\nТест 3: 0/10\nТест 4: 0/10\nТест 5: 0/10\nТест 6: 0/10\n\nРекорды:\n";
+                                    User user = data.getUser();
+                                    Integer[] gamesBests = user.getGamesBests();
+                                    if (gamesBests.length > 1)
+                                        results += "Логическая схема: " +  gamesBests[0] + " очков\n" + "Викторина: " + gamesBests[1]+ " очков";
+                                    tvResults.setText(results);
+                                }
+                            });
+                    AlertDialog alert = aBuilder.create();
+                    alert.setTitle("Синхронизация");
+                    alert.show();
+                } else if (response.code() == 404) {
+                    Toast.makeText(ProfileActivity.this,
+                            "Неправильный логин или пароль", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(ProfileActivity.this,
+                            "Странная ошибка... свяжись с администратором",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(ProfileActivity.this,
+                        "Ой-ой, не могу подключиться к серверу", Toast.LENGTH_LONG).show();
+                Logger.getLogger(ProfileActivity.class.getName()).log(Level.SEVERE, "", t);
+                Log.i(TAG, "Login: FAILED");
+            }
+        });
+    }
+
+    // Метод для регистрации
     private void Registration() {
         RetrofitService retrofitService = data.getRetrofitService();
         UserService userService = retrofitService.getRetrofit().create(UserService.class);
-        // TODO Получение из User / Занесение данных
         User currentUser = data.getUser();
         String loginReg = etRegLogin.getText().toString();
         String email = etRegEmail.getText().toString();
@@ -193,11 +192,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(ProfileActivity.this,
                             "Ты успешно зарегистрирован!",
                             Toast.LENGTH_LONG).show();
-//                    System.out.println("PASS");
-//                    user.setToken(response.body());
-//                    System.out.println(user.getToken());
-//                    System.out.println(user);
-//                    currentUser.clone(user);
                     buttonSignIn.performClick();
                 } else if (response.code() == 409) {
                     Toast.makeText(ProfileActivity.this,
@@ -216,7 +210,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(ProfileActivity.this,
                         "Ой-ой, не могу подключиться к серверу", Toast.LENGTH_LONG).show();
                 Logger.getLogger(ProfileActivity.class.getName()).log(Level.SEVERE, "", t);
-                System.out.println("FAILED");
+                Log.i(TAG, "Registration: FAILED");
             }
         });
     }

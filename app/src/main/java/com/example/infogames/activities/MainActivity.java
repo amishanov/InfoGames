@@ -33,6 +33,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "MainActivity";
     Data data;
     User user;
     Toolbar toolbar;
@@ -54,34 +55,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user = data.getUser();
         retrofitService = data.getRetrofitService();
 
-        // Это загрузка из ресурсных файлов
-        // TODO сделать так, чтобы выполнялось единожды при первом-первом запуске при отсутствии подключения к серверу
+        // Загрузка из ресурсных файлов
+        // TODO сделать поддержку загрузки при старте приложения, а не активности
+        //  (Можно в Singletone добавить переменную для проверки)
         tests = JSONHelper.importTestsFromRes(this);
         themes = JSONHelper.importThemesFromRes(this);
         JSONHelper.exportTestsToJSON(this, tests);
         JSONHelper.exportThemesToJSON(this, themes);
 
+        // Проверка существования данных пользователя в локальном хранилище
+        // TODO сломано из-за nullpointer, починить
         if (!JSONHelper.check(this)) {
+            Log.i(TAG, "Пользовательских данных не существует, создание...");
             JSONHelper.exportUserToJSON(this, user);
 
         } else {
-            //TODO выяснить, почему нужно клонировать, а не просто перезаписать ссылку (по-моему, из-за этого что-то ломалось)
-            user.clone(JSONHelper.importUserFromJSON(this));
-            System.out.println("WROOOOONG");
-//            user.getAccess()[1] = false;
-//            JSONHelper.exportUserToJSON(this, user);
+            Log.i(TAG, "Пользовательские данные найдены");
+
+//            user.clone(JSONHelper.importUserFromJSON(this));
         }
 
+        // Установка проверки входа в онлайн, если есть, будет осуществляться передача прогресса
+        // на сервер
         if (user.getToken() != null) {
             data.setIsLogin(true);
         }
-
-        // TODO Нужно сделать запрос только при старте приложения
-        //  (Можно в Singletone добавить переменную для проверки)
-
         initialStart();
-//        user.setScore(0);
-
     }
 
     @Override
@@ -98,29 +97,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    // Получает теоретический материал и материал для тестирования
+    // Получение теории и тестов с сервера
     public void initialStart() {
         TestService testService = retrofitService.getRetrofit().create(TestService.class);
         testService.getTests().enqueue(new Callback<List<Test>>() {
                 @Override
                 public void onResponse(Call<List<Test>> call, Response<List<Test>> response) {
                     if (response.code() == 200) {
-//                        System.out.println("GET TEST: PASS");
-//                        tests = response.body();
+                        Log.i(TAG, "GET TEST: PASS");
                         JSONHelper.exportTestsToJSON(MainActivity.this, response.body());
-//                        System.out.println(tests.get(0).getQuestionList().get(0));
-//                        System.out.println(tests.get(1));
 
                     } else if (response.code() == 404){
-//                        System.out.println("GET TEST NOT FOUND");
+                        Log.i(TAG, "GET TEST: NOT FOUND");
                     } else {
-//                        System.out.println("GET TEST SOMETHING GOES WRONG...");
+                        Log.i(TAG, "GET TEST: SOMETHING GOES WRONG...");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<Test>> call, Throwable t) {
-//                    System.out.println("GET TEST FAILED");
                     Toast.makeText(MainActivity.this, "" +
                             "Не удалось подключиться к серверу для синхронизации тестов",
                             Toast.LENGTH_LONG).show();
@@ -132,17 +127,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onResponse(Call<List<Theme>> call, Response<List<Theme>> response) {
                     if (response.code() == 200) {
-//                        MainActivity.this.themes = response.body();
                         JSONHelper.exportThemesToJSON(MainActivity.this, response.body());
-//                        System.out.println("getThemes: themes was found");
+                        Log.i(TAG, "GET THEMES: PASS");
                     } else if (response.code() == 404) {
-//                        System.out.println("Error: Themes was not found");
+                        Log.i(TAG, "GET THEMES: NOT FOUND");
+                    } else {
+                        Log.i(TAG, "GET THEMES: SOMETHING GOES WRONG...");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<Theme>> call, Throwable t) {
-//                    System.out.println("Error: не удалось подключиться для получения тем");
                     Toast.makeText(MainActivity.this, "" +
                                     "Не удалось подключиться к серверу для синхронизации тем",
                             Toast.LENGTH_LONG).show();
@@ -151,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    // Метод для настройки кнопок
+    // Настройка кнопок
     private void buttonSetUp() {
         Button learnButton = (Button) findViewById(R.id.buttonLearn);
         Button playButton = (Button) findViewById(R.id.buttonPlay);
@@ -165,8 +160,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonLearn) {
-//            System.out.println("user: " + user);
-//            System.out.println("data user: " + data.getUser());
             Intent intent = new Intent(this, ThemesActivity.class);
             startActivity(intent);
         } else if (id == R.id.buttonPlay) {

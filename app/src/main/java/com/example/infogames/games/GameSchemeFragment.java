@@ -8,7 +8,6 @@ import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     int inStateCd;
     ImageView ivTimer, ivWrong1, ivWrong2, ivWrong3, ivScheme;
     TextView tvPoints, tvTimer, tvScheme, tvScore;
-    Button btnStartEnd;
+    Button buttonStartEnd;
     long timeLeft = 60000;
     boolean gameRunning = false;
     int currentCode = 0, errors = 0, points = 0, schemeType = 0;
@@ -113,8 +112,8 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
 
         buttonsOutDc = new ImageButton[] {view.findViewById(R.id.buttonOut0),view.findViewById(R.id.buttonOut1),
                 view.findViewById(R.id.buttonOut2), view.findViewById(R.id.buttonOut3)};
-        for (ImageButton btn: buttonsOutDc) {
-            btn.setOnClickListener(this);
+        for (ImageButton button: buttonsOutDc) {
+            button.setOnClickListener(this);
         }
         buttonsOutCd = new ImageButton[] {view.findViewById(R.id.buttonOutCd1), view.findViewById(R.id.buttonOutCd2)};
         buttonsOutCd[0].setOnClickListener(this);
@@ -171,7 +170,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
             buttonsOutCd[1].setImageResource(R.drawable.halfround_button_green);
 
         }
-        else if (id == R.id.btnStartFinishGame) {
+        else if (id == R.id.buttonStartFinishGame) {
             if (!gameRunning) {
                 tvScheme.setVisibility(View.INVISIBLE);
                 groupScheme.setVisibility(View.VISIBLE);
@@ -210,7 +209,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
                 res += "\nТы набрал: " + points;
                 tvScheme.setText(res);
                 tvScheme.setVisibility(View.VISIBLE);
-                btnStartEnd.setVisibility(View.INVISIBLE);
+                buttonStartEnd.setVisibility(View.INVISIBLE);
                 //TODO обновление user и файла
                 //TODO проверка isLogin -> отправка данных на сервер
             }
@@ -227,7 +226,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
                         updateGame();
                     }
                     else {
-                        btnStartEnd.performClick();
+                        buttonStartEnd.performClick();
                     }
                 }
             }
@@ -257,7 +256,7 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
     }
 
     public void startGame() {
-        btnStartEnd.setText(R.string.finish_game);
+        buttonStartEnd.setText(R.string.finish_game);
         countDownTimer = new CountDownTimer(timeLeft, 1000) {
             @Override
             public void onTick(long l) {
@@ -266,11 +265,10 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
             }
             @Override
             public void onFinish() {
-                btnStartEnd.performClick();
+                buttonStartEnd.performClick();
             }
         };
-//        currentCode = (int) (Math.random() * 4);
-//        tvCode.setText(Integer.toString(currentCode));
+
         updateGame();
         countDownTimer.start();
     }
@@ -351,9 +349,9 @@ public class GameSchemeFragment extends Fragment implements View.OnClickListener
         ivTimer.setVisibility(View.VISIBLE);
         tvPoints.setVisibility(View.VISIBLE);
         tvTimer.setVisibility(View.VISIBLE);
-        btnStartEnd = getActivity().findViewById(R.id.btnStartFinishGame);
-        btnStartEnd.setVisibility(View.VISIBLE);
-        btnStartEnd.setOnClickListener(this);
+        buttonStartEnd = getActivity().findViewById(R.id.buttonStartFinishGame);
+        buttonStartEnd.setVisibility(View.VISIBLE);
+        buttonStartEnd.setOnClickListener(this);
     }
 
     @Override

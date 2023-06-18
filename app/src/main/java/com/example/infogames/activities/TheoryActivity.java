@@ -42,7 +42,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
     SoundPool soundPool;
     int soundAchievement;
     TextView textViewScore;
-    Button buttonReview, buttonFinishTheory, btnSendErrorReport;
+    Button buttonReview, buttonFinishTheory, buttonSendErrorReport;
 
 
     @Override
@@ -54,14 +54,13 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ratingBar = (RatingBar) findViewById(R.id.ratingBarTheory);
-//        textViewTheory = (TextView) findViewById(R.id.textViewTheory);
         textViewScore = (TextView) findViewById(R.id.textViewScore);
         buttonReview = (Button) findViewById(R.id.buttonReviewTheory);
         buttonReview.setOnClickListener(this);
         buttonFinishTheory = (Button) findViewById(R.id.buttonFinishTheory);
         buttonFinishTheory.setOnClickListener(this);
-        btnSendErrorReport = findViewById(R.id.buttonSendErrorTheory);
-        btnSendErrorReport.setOnClickListener(this);
+        buttonSendErrorReport = findViewById(R.id.buttonSendErrorTheory);
+        buttonSendErrorReport.setOnClickListener(this);
 
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -85,9 +84,6 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         TheoryListAdapter adapter = new TheoryListAdapter(this, subStr);
         RecyclerView recyclerView = findViewById(R.id.theoryList);
         recyclerView.setAdapter(adapter);
-//        ImageView imageViewTest = findViewById(R.id.imageViewTest);
-//        Picasso.get().load(subStr.get(3)).into(imageViewTest);
-//        textViewTheory.setText(Html.fromHtml(subStr.get(1), Html.FROM_HTML_MODE_COMPACT));
         for (String s: subStr) {
             System.out.println(s);
         }
@@ -99,7 +95,6 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         super.onStart();
         data = Data.getInstance();
         user = data.getUser();
-        //TODO Штуки, которые могут понадобиться при возобновлении работы
         System.out.println(data.isLogin());
         textViewScore.setText(Integer.toString(user.getScore()));
         ImageButton buttonProfile = (ImageButton) findViewById(R.id.buttonProfile);
@@ -110,8 +105,6 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
         else {
             buttonProfile.setImageResource(R.drawable.ic_profile);
         }
-
-//        textViewTheory.setText(Html.fromHtml(theme.getTheory(), Html.FROM_HTML_MODE_COMPACT));
     }
 
     @Override
@@ -136,7 +129,7 @@ public class TheoryActivity extends AppCompatActivity implements View.OnClickLis
                 }
             } else {
                 Toast.makeText(this,
-                        "Мне казалось, ты уже изучил эту тему...Но я рад, что ты повторяешь изученный материал",
+                        "Мне казалось, ты уже изучил эту тему... Но я рад, что ты повторяешь изученный материал",
                         Toast.LENGTH_LONG).show();
             }
 
